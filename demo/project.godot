@@ -14,10 +14,10 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Plugin Template Demo"
+config/name="Vision Demo"
 run/main_scene="uid://daro5x6n3pd26"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://assets/plugin-template-android.png"
+config/icon="res://assets/vision-android.png"
 
 [debug]
 
@@ -33,7 +33,7 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/PluginTemplatePlugin/plugin.cfg")
+enabled=PackedStringArray("res://addons/VisionPlugin/plugin.cfg")
 
 [rendering]
 

@@ -1,10 +1,10 @@
 //
-// © 2026-present https://github.com/<<GitHubUsername>>
+// © 2026-present https://github.com/cengiz-pz
 //
 
 import Foundation
 
-@objc public class PluginTemplate: NSObject {
+@objc public class Vision: NSObject {
 
 	// TODO: callbacks to be set by the Objective-C bridge
 	@objc public var onThisHappened: ((_ info: [String: Any]) -> Void)?

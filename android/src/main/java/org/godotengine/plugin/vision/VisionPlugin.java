@@ -1,8 +1,8 @@
 //
-// © 2026-present https://github.com/<<GitHubUsername>>
+// © 2026-present https://github.com/cengiz-pz
 //
 
-package org.godotengine.plugin.plugintemplate;
+package org.godotengine.plugin.vision;
 
 import android.app.Activity;
 import android.util.Log;
@@ -20,8 +20,8 @@ import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
 
-public class PluginTemplatePlugin extends GodotPlugin {
-	public static final String CLASS_NAME = PluginTemplatePlugin.class.getSimpleName();
+public class VisionPlugin extends GodotPlugin {
+	public static final String CLASS_NAME = VisionPlugin.class.getSimpleName();
 	static final String LOG_TAG = "godot::" + CLASS_NAME;
 
 
@@ -29,7 +29,7 @@ public class PluginTemplatePlugin extends GodotPlugin {
 
 	// TODO: Define all signals
 
-	public PluginTemplatePlugin(Godot godot) {
+	public VisionPlugin(Godot godot) {
 		super(godot);
 	}
 
@@ -63,8 +63,8 @@ public class PluginTemplatePlugin extends GodotPlugin {
 	}
 
 	@UsedByGodot
-	public Object[] get_plugin_template() {
-		Log.d(LOG_TAG, "get_plugin_template() invoked");
+	public Object[] get_vision() {
+		Log.d(LOG_TAG, "get_vision() invoked");
 
 		List<Dictionary> resultList = new ArrayList<>();
 
