@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cy0mnncxevupr"
-path="res://.godot/imported/vision-android.png-ba2248245b55ec7971d0694095f47030.ctex"
+uid="uid://ccwvfcumkwxsd"
+path="res://.godot/imported/vision-android.png-12d2c13f47c8f040cbfbbb5f6a7e9dba.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/vision-android.png"
-dest_files=["res://.godot/imported/vision-android.png-ba2248245b55ec7971d0694095f47030.ctex"]
+dest_files=["res://.godot/imported/vision-android.png-12d2c13f47c8f040cbfbbb5f6a7e9dba.ctex"]
 
 [params]
 

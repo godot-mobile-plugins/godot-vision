@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2myrgf8pkumi"
-path="res://.godot/imported/vision-ios.png-c5c84f4b4dab55e95105ba744eaa4765.ctex"
+uid="uid://bhgbr1eclf27y"
+path="res://.godot/imported/vision-ios.png-359af56c60aee2a96cf1ca4848f7717c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/vision-ios.png"
-dest_files=["res://.godot/imported/vision-ios.png-c5c84f4b4dab55e95105ba744eaa4765.ctex"]
+dest_files=["res://.godot/imported/vision-ios.png-359af56c60aee2a96cf1ca4848f7717c.ctex"]
 
 [params]
 
