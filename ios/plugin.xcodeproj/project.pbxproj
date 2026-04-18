@@ -3,18 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		078A3A442F336DA7008B4674 /* vision_logger.h in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E012F3348BA002D3480 /* vision_logger.h */; };
-		078A3A452F336DA7008B4674 /* vision_logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E022F3348BA002D3480 /* vision_logger.mm */; };
-		078A3A462F336DA7008B4674 /* vision_plugin.h in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E032F3348BA002D3480 /* vision_plugin.h */; };
-		078A3A472F336DA7008B4674 /* vision_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E042F3348BA002D3480 /* vision_plugin.mm */; };
-		078A3A482F336DA7008B4674 /* vision_plugin_bootstrap.h in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E052F3348BA002D3480 /* vision_plugin_bootstrap.h */; };
-		078A3A492F336DA7008B4674 /* vision_plugin_bootstrap.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E062F3348BA002D3480 /* vision_plugin_bootstrap.mm */; };
-		078A3A4A2F336DA7008B4674 /* vision_plugin-Bridging-Header.h in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E072F3348BA002D3480 /* vision_plugin-Bridging-Header.h */; };
-		078A3A4B2F336DA7008B4674 /* Vision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C98E082F3348BA002D3480 /* Vision.swift */; };
+		074B0D882F9325BF00302C99 /* SwiftTasksVision in Frameworks */ = {isa = PBXBuildFile; productRef = 98F49F4694587E1A2041F5E5 /* SwiftTasksVision */; };
+		074B0D992F9325E700302C99 /* vision_logger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D912F9325E700302C99 /* vision_logger.mm */; };
+		074B0D9A2F9325E700302C99 /* FaceMeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D8B2F9325E700302C99 /* FaceMeshConstants.swift */; };
+		074B0D9B2F9325E700302C99 /* ScanError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D8F2F9325E700302C99 /* ScanError.swift */; };
+		074B0D9C2F9325E700302C99 /* VisionSwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D972F9325E700302C99 /* VisionSwiftBridge.swift */; };
+		074B0D9D2F9325E700302C99 /* FaceLandmarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D8A2F9325E700302C99 /* FaceLandmarker.swift */; };
+		074B0D9E2F9325E700302C99 /* FaceMeshInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D8C2F9325E700302C99 /* FaceMeshInfo.swift */; };
+		074B0D9F2F9325E700302C99 /* vision_plugin_bootstrap.mm in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D952F9325E700302C99 /* vision_plugin_bootstrap.mm */; };
+		074B0DA02F9325E700302C99 /* vision_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D932F9325E700302C99 /* vision_plugin.mm */; };
+		074B0DA12F9325E700302C99 /* FaceScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D8D2F9325E700302C99 /* FaceScanResult.swift */; };
+		074B0DA22F9325E700302C99 /* ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B0D8E2F9325E700302C99 /* ImageInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,14 +33,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		07C98E012F3348BA002D3480 /* vision_logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vision_logger.h; sourceTree = "<group>"; };
-		07C98E022F3348BA002D3480 /* vision_logger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = vision_logger.mm; sourceTree = "<group>"; };
-		07C98E032F3348BA002D3480 /* vision_plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vision_plugin.h; sourceTree = "<group>"; };
-		07C98E042F3348BA002D3480 /* vision_plugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = vision_plugin.mm; sourceTree = "<group>"; };
-		07C98E052F3348BA002D3480 /* vision_plugin_bootstrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vision_plugin_bootstrap.h; sourceTree = "<group>"; };
-		07C98E062F3348BA002D3480 /* vision_plugin_bootstrap.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = vision_plugin_bootstrap.mm; sourceTree = "<group>"; };
-		07C98E072F3348BA002D3480 /* vision_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "vision_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
-		07C98E082F3348BA002D3480 /* Vision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vision.swift; sourceTree = "<group>"; };
+		074B0D892F9325E700302C99 /* face_landmarker.task */ = {isa = PBXFileReference; lastKnownFileType = file; path = face_landmarker.task; sourceTree = "<group>"; };
+		074B0D8A2F9325E700302C99 /* FaceLandmarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceLandmarker.swift; sourceTree = "<group>"; };
+		074B0D8B2F9325E700302C99 /* FaceMeshConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceMeshConstants.swift; sourceTree = "<group>"; };
+		074B0D8C2F9325E700302C99 /* FaceMeshInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceMeshInfo.swift; sourceTree = "<group>"; };
+		074B0D8D2F9325E700302C99 /* FaceScanResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceScanResult.swift; sourceTree = "<group>"; };
+		074B0D8E2F9325E700302C99 /* ImageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInfo.swift; sourceTree = "<group>"; };
+		074B0D8F2F9325E700302C99 /* ScanError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanError.swift; sourceTree = "<group>"; };
+		074B0D902F9325E700302C99 /* vision_logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vision_logger.h; sourceTree = "<group>"; };
+		074B0D912F9325E700302C99 /* vision_logger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = vision_logger.mm; sourceTree = "<group>"; };
+		074B0D922F9325E700302C99 /* vision_plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vision_plugin.h; sourceTree = "<group>"; };
+		074B0D932F9325E700302C99 /* vision_plugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = vision_plugin.mm; sourceTree = "<group>"; };
+		074B0D942F9325E700302C99 /* vision_plugin_bootstrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vision_plugin_bootstrap.h; sourceTree = "<group>"; };
+		074B0D952F9325E700302C99 /* vision_plugin_bootstrap.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = vision_plugin_bootstrap.mm; sourceTree = "<group>"; };
+		074B0D962F9325E700302C99 /* vision_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "vision_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
+		074B0D972F9325E700302C99 /* VisionSwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionSwiftBridge.swift; sourceTree = "<group>"; };
 		90CAAA9424E71FF10013969F /* libvision_plugin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvision_plugin.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -46,23 +56,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				074B0D882F9325BF00302C99 /* SwiftTasksVision in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		07C98E092F3348BA002D3480 /* src */ = {
+		074B0D982F9325E700302C99 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				07C98E012F3348BA002D3480 /* vision_logger.h */,
-				07C98E022F3348BA002D3480 /* vision_logger.mm */,
-				07C98E032F3348BA002D3480 /* vision_plugin.h */,
-				07C98E042F3348BA002D3480 /* vision_plugin.mm */,
-				07C98E052F3348BA002D3480 /* vision_plugin_bootstrap.h */,
-				07C98E062F3348BA002D3480 /* vision_plugin_bootstrap.mm */,
-				07C98E072F3348BA002D3480 /* vision_plugin-Bridging-Header.h */,
-				07C98E082F3348BA002D3480 /* Vision.swift */,
+				074B0D892F9325E700302C99 /* face_landmarker.task */,
+				074B0D8A2F9325E700302C99 /* FaceLandmarker.swift */,
+				074B0D8B2F9325E700302C99 /* FaceMeshConstants.swift */,
+				074B0D8C2F9325E700302C99 /* FaceMeshInfo.swift */,
+				074B0D8D2F9325E700302C99 /* FaceScanResult.swift */,
+				074B0D8E2F9325E700302C99 /* ImageInfo.swift */,
+				074B0D8F2F9325E700302C99 /* ScanError.swift */,
+				074B0D902F9325E700302C99 /* vision_logger.h */,
+				074B0D912F9325E700302C99 /* vision_logger.mm */,
+				074B0D922F9325E700302C99 /* vision_plugin.h */,
+				074B0D932F9325E700302C99 /* vision_plugin.mm */,
+				074B0D942F9325E700302C99 /* vision_plugin_bootstrap.h */,
+				074B0D952F9325E700302C99 /* vision_plugin_bootstrap.mm */,
+				074B0D962F9325E700302C99 /* vision_plugin-Bridging-Header.h */,
+				074B0D972F9325E700302C99 /* VisionSwiftBridge.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -70,7 +88,7 @@
 		90CAAA8B24E71FF10013969F = {
 			isa = PBXGroup;
 			children = (
-				07C98E092F3348BA002D3480 /* src */,
+				074B0D982F9325E700302C99 /* src */,
 				90CAAA9524E71FF10013969F /* Products */,
 				90CAAAA824E72A8A0013969F /* Frameworks */,
 			);
@@ -107,6 +125,9 @@
 			dependencies = (
 			);
 			name = vision_plugin;
+			packageProductDependencies = (
+				98F49F4694587E1A2041F5E5 /* SwiftTasksVision */,
+			);
 			productName = vision_plugin;
 			productReference = 90CAAA9424E71FF10013969F /* libvision_plugin.a */;
 			productType = "com.apple.product-type.library.static";
@@ -135,6 +156,9 @@
 				Base,
 			);
 			mainGroup = 90CAAA8B24E71FF10013969F;
+			packageReferences = (
+				6ECE7FF34B5AB20344DC8455 /* XCRemoteSwiftPackageReference "SwiftTasksVision" */,
+			);
 			productRefGroup = 90CAAA9524E71FF10013969F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -149,14 +173,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				078A3A442F336DA7008B4674 /* vision_logger.h in Sources */,
-				078A3A452F336DA7008B4674 /* vision_logger.mm in Sources */,
-				078A3A462F336DA7008B4674 /* vision_plugin.h in Sources */,
-				078A3A472F336DA7008B4674 /* vision_plugin.mm in Sources */,
-				078A3A482F336DA7008B4674 /* vision_plugin_bootstrap.h in Sources */,
-				078A3A492F336DA7008B4674 /* vision_plugin_bootstrap.mm in Sources */,
-				078A3A4A2F336DA7008B4674 /* vision_plugin-Bridging-Header.h in Sources */,
-				078A3A4B2F336DA7008B4674 /* Vision.swift in Sources */,
+				074B0D992F9325E700302C99 /* vision_logger.mm in Sources */,
+				074B0D9A2F9325E700302C99 /* FaceMeshConstants.swift in Sources */,
+				074B0D9B2F9325E700302C99 /* ScanError.swift in Sources */,
+				074B0D9C2F9325E700302C99 /* VisionSwiftBridge.swift in Sources */,
+				074B0D9D2F9325E700302C99 /* FaceLandmarker.swift in Sources */,
+				074B0D9E2F9325E700302C99 /* FaceMeshInfo.swift in Sources */,
+				074B0D9F2F9325E700302C99 /* vision_plugin_bootstrap.mm in Sources */,
+				074B0DA02F9325E700302C99 /* vision_plugin.mm in Sources */,
+				074B0DA12F9325E700302C99 /* FaceScanResult.swift in Sources */,
+				074B0DA22F9325E700302C99 /* ImageInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,6 +461,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6ECE7FF34B5AB20344DC8455 /* XCRemoteSwiftPackageReference "SwiftTasksVision" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/paescebu/SwiftTasksVision.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.21;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		98F49F4694587E1A2041F5E5 /* SwiftTasksVision */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6ECE7FF34B5AB20344DC8455 /* XCRemoteSwiftPackageReference "SwiftTasksVision" */;
+			productName = SwiftTasksVision;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 90CAAA8C24E71FF10013969F /* Project object */;
 }
