@@ -4,8 +4,6 @@
 
 package org.godotengine.plugin.vision.model;
 
-import android.util.Log;
-
 import com.google.mlkit.vision.facemesh.FaceMesh;
 
 import java.util.List;
@@ -76,7 +74,7 @@ public class FaceScanResult {
 	public Dictionary buildRawData() {
 		Dictionary dict = new Dictionary();
 
-		dict.put(IMAGE_WIDTH_PROPERTY,  (long) imageWidth);
+		dict.put(IMAGE_WIDTH_PROPERTY, (long) imageWidth);
 		dict.put(IMAGE_HEIGHT_PROPERTY, (long) imageHeight);
 
 		Object[] facesArray = new Object[faceMeshes.size()];

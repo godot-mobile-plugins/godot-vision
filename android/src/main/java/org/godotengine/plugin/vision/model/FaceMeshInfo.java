@@ -4,8 +4,6 @@
 
 package org.godotengine.plugin.vision.model;
 
-import android.util.Log;
-
 import com.google.mlkit.vision.common.PointF3D;
 import com.google.mlkit.vision.common.Triangle;
 import com.google.mlkit.vision.facemesh.FaceMesh;
@@ -104,8 +102,8 @@ public class FaceMeshInfo {
 			PointF3D pos = allPoints.get(i).getPosition();
 			// Normalise pixel-space x/y to [0, 1]; z stays as-is (depth).
 			pointsArray[i] = new Object[]{
-					(double) (pos.getX() / imageWidth),
-					(double) (pos.getY() / imageHeight),
+					(double) pos.getX() / imageWidth,
+					(double) pos.getY() / imageHeight,
 					(double) pos.getZ()
 			};
 		}
@@ -134,8 +132,8 @@ public class FaceMeshInfo {
 			for (int i = 0; i < contourPoints.size(); i++) {
 				PointF3D pos = contourPoints.get(i).getPosition();
 				contourArray[i] = new Object[]{
-						(double) (pos.getX() / imageWidth),
-						(double) (pos.getY() / imageHeight),
+						(double) pos.getX() / imageWidth,
+						(double) pos.getY() / imageHeight,
 						(double) pos.getZ()
 				};
 			}

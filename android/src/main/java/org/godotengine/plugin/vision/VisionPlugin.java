@@ -10,18 +10,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.common.PointF3D;
-import com.google.mlkit.vision.common.Triangle;
-import com.google.mlkit.vision.facemesh.FaceMesh;
 import com.google.mlkit.vision.facemesh.FaceMeshDetection;
 import com.google.mlkit.vision.facemesh.FaceMeshDetector;
 import com.google.mlkit.vision.facemesh.FaceMeshDetectorOptions;
-import com.google.mlkit.vision.facemesh.FaceMeshPoint;
 
+import java.io.Closeable;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.godotengine.godot.Godot;
@@ -34,7 +29,6 @@ import org.godotengine.plugin.vision.model.FaceScanResult;
 import org.godotengine.plugin.vision.model.ImageInfo;
 import org.godotengine.plugin.vision.model.ScanError;
 import static org.godotengine.plugin.vision.model.ScanError.Code;
-
 
 public class VisionPlugin extends GodotPlugin {
 	public static final String CLASS_NAME = VisionPlugin.class.getSimpleName();
@@ -73,10 +67,7 @@ public class VisionPlugin extends GodotPlugin {
 		super.onGodotSetupCompleted();
 
 		// Build the detector once and reuse it across calls.
-		FaceMeshDetectorOptions options = new FaceMeshDetectorOptions.Builder()
-				// USE_FACE_KEY_POINTS gives 468 landmarks + triangles.
-				// BOUNDING_BOX_ONLY is faster but returns no mesh – keep default.
-				.build();
+		FaceMeshDetectorOptions options = new FaceMeshDetectorOptions.Builder().build();
 		faceMeshDetector = FaceMeshDetection.getClient(options);
 		Log.d(LOG_TAG, "FaceMeshDetector initialised");
 	}
@@ -107,7 +98,7 @@ public class VisionPlugin extends GodotPlugin {
 
 		ImageInfo imageInfo = new ImageInfo(imageDict);
 		byte[] buffer = imageInfo.getBuffer();
-		int width  = imageInfo.getWidth();
+		int width = imageInfo.getWidth();
 		int height = imageInfo.getHeight();
 
 		if (buffer == null || width <= 0 || height <= 0) {
@@ -130,8 +121,6 @@ public class VisionPlugin extends GodotPlugin {
 			faceMeshDetector.process(mlImage)
 					.addOnSuccessListener(faceMeshes -> {
 						if (faceMeshes == null || faceMeshes.isEmpty()) {
-							// Successful run but no faces found – emit failure with a
-							// distinct code so the caller can distinguish from errors.
 							emitSignal(FACE_MESH_FAILED_SIGNAL,
 									new ScanError(Code.NO_CODE_DETECTED, "No faces detected")
 											.buildRawData());
@@ -156,7 +145,11 @@ public class VisionPlugin extends GodotPlugin {
 	@Override
 	public void onMainDestroy() {
 		if (faceMeshDetector != null) {
-			faceMeshDetector.close();
+			try {
+				((Closeable) faceMeshDetector).close();
+			} catch (java.io.IOException e) {
+				Log.e(LOG_TAG, "Error closing FaceMeshDetector", e);
+			}
 			faceMeshDetector = null;
 			Log.d(LOG_TAG, "FaceMeshDetector closed");
 		}

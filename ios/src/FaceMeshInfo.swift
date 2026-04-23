@@ -33,88 +33,103 @@ import Foundation
 
 final class FaceMeshInfo {
 
-    // -----------------------------------------------------------------------
-    // Types
-    // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	// Types
+	// -----------------------------------------------------------------------
 
-    typealias Landmark = (x: Float, y: Float, z: Float)
+	typealias Landmark = (x: Float, y: Float, z: Float)
 
-    // -----------------------------------------------------------------------
-    // Private state
-    // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	// Private state
+	// -----------------------------------------------------------------------
 
-    private let landmarks: [Landmark]   // exactly 468 entries
+	private let landmarks: [Landmark]   // exactly 468 entries
 
-    // -----------------------------------------------------------------------
-    // Initialiser
-    // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	// Initialiser
+	// -----------------------------------------------------------------------
 
-    init(landmarks: [Landmark]) {
-        self.landmarks = landmarks
-    }
+	init(landmarks: [Landmark]) {
+		self.landmarks = landmarks
+	}
 
-    // -----------------------------------------------------------------------
-    // buildNSDictionary
-    //
-    // Converts the landmark list into the NSDictionary structure described in
-    // the header comment above.  All coordinates are already normalised [0,1]
-    // by MediaPipe, so no scaling is needed here (unlike the Android code
-    // which divides pixel coordinates by image dimensions).
-    //
-    // The returned object uses only Foundation types (NSArray, NSDictionary,
-    // NSNumber) so it can be converted to a Godot Dictionary by the ObjC++
-    // conversion helpers in vision_plugin.mm without any MediaPipe dependency.
-    // -----------------------------------------------------------------------
-    func buildNSDictionary() -> NSDictionary {
-        let dict = NSMutableDictionary()
+	// -----------------------------------------------------------------------
+	// buildNSDictionary
+	//
+	// Converts the landmark list into the NSDictionary structure described in
+	// the header comment above.  All coordinates are already normalised [0,1]
+	// by MediaPipe, so no scaling is needed here (unlike the Android code
+	// which divides pixel coordinates by image dimensions).
+	//
+	// The returned object uses only Foundation types (NSArray, NSDictionary,
+	// NSNumber) so it can be converted to a Godot Dictionary by the ObjC++
+	// conversion helpers in vision_plugin.mm without any MediaPipe dependency.
+	//
+	// Implementation note: NSMutableDictionary is returned directly (implicit
+	// upcast to the NSDictionary return type).  Copying via NSDictionary(dictionary:)
+	// or dict.copy() both route through Swift's bridging machinery, which can
+	// re-box the stored NSDictionary values as Swift [AnyHashable: Any] value
+	// types.  Once re-boxed, `as? NSDictionary` on a retrieved element returns
+	// nil even though the data is intact.  Returning the NSMutableDictionary
+	// directly avoids any copy step and keeps every stored object as a genuine
+	// ObjC reference that survives `as? NSDictionary` casts.
+	// -----------------------------------------------------------------------
+	func buildNSDictionary() -> NSDictionary {
+		let dict = NSMutableDictionary()
 
-        // ---- points --------------------------------------------------------
-        dict["points"] = buildPointsArray(landmarks)
+		// ---- points --------------------------------------------------------
+		dict["points"] = buildPointsArray(landmarks)
 
-        // ---- triangles -----------------------------------------------------
-        dict["triangles"] = buildTrianglesArray()
+		// ---- triangles -----------------------------------------------------
+		dict["triangles"] = buildTrianglesArray()
 
-        // ---- contours ------------------------------------------------------
-        dict["contours"] = buildContoursDict()
+		// ---- contours ------------------------------------------------------
+		dict["contours"] = buildContoursDict()
 
-        return dict.copy() as! NSDictionary
-    }
+		// NSMutableDictionary is a subclass of NSDictionary: implicit upcast,
+		// no cast operator required, no bridging copy performed.
+		return dict
+	}
 
-    // -----------------------------------------------------------------------
-    // Private helpers
-    // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	// Private helpers
+	// -----------------------------------------------------------------------
 
-    /// Converts a flat landmark list into NSArray of NSArray([x, y, z]).
-    private func buildPointsArray(_ pts: [Landmark]) -> NSArray {
-        return pts.map { lm -> NSArray in
-            [NSNumber(value: lm.x), NSNumber(value: lm.y), NSNumber(value: lm.z)] as NSArray
-        } as NSArray
-    }
+	/// Converts a flat landmark list into NSArray of NSArray([x, y, z]).
+	private func buildPointsArray(_ pts: [Landmark]) -> NSArray {
+		return pts.map { lm -> NSArray in
+			[NSNumber(value: lm.x), NSNumber(value: lm.y), NSNumber(value: lm.z)] as NSArray
+		} as NSArray
+	}
 
-    /// Builds the triangles array using the canonical MediaPipe tessellation
-    /// loaded by FaceMeshConstants.
-    private func buildTrianglesArray() -> NSArray {
-        return FaceMeshConstants.triangles.map { tri -> NSArray in
-            [NSNumber(value: tri[0]),
-             NSNumber(value: tri[1]),
-             NSNumber(value: tri[2])] as NSArray
-        } as NSArray
-    }
+	/// Builds the triangles array using the canonical MediaPipe tessellation
+	/// loaded by FaceMeshConstants.
+	private func buildTrianglesArray() -> NSArray {
+		return FaceMeshConstants.triangles.map { tri -> NSArray in
+			[NSNumber(value: tri[0]),
+			NSNumber(value: tri[1]),
+			NSNumber(value: tri[2])] as NSArray
+		} as NSArray
+	}
 
-    /// Builds the contours dictionary by sampling the landmark list at the
-    /// pre-defined contour indices from FaceMeshConstants.
-    private func buildContoursDict() -> NSDictionary {
-        let dict = NSMutableDictionary()
+	/// Builds the contours dictionary by sampling the landmark list at the
+	/// pre-defined contour indices from FaceMeshConstants.
+	///
+	/// Returns the NSMutableDictionary directly (same reasoning as
+	/// buildNSDictionary): avoids a bridging copy so every value remains a
+	/// genuine ObjC object that `as? NSDictionary` can match.
+	private func buildContoursDict() -> NSDictionary {
+		let dict = NSMutableDictionary()
 
-        for (key, indices) in zip(FaceMeshConstants.contourKeys,
-                                  FaceMeshConstants.contourIndices) {
-            let contourLandmarks: [Landmark] = indices.compactMap { idx in
-                guard idx < landmarks.count else { return nil }
-                return landmarks[idx]
-            }
-            dict[key] = buildPointsArray(contourLandmarks)
-        }
+		for (key, indices) in zip(FaceMeshConstants.contourKeys,
+								FaceMeshConstants.contourIndices) {
+			let contourLandmarks: [Landmark] = indices.compactMap { idx in
+				guard idx < landmarks.count else { return nil }
+				return landmarks[idx]
+			}
+			dict[key] = buildPointsArray(contourLandmarks)
+		}
 
-        return dict.copy() as! NSDictionary
-    }
+		return dict
+	}
 }

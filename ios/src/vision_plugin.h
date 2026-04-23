@@ -9,8 +9,8 @@
 
 #include "core/object/class_db.h"
 #include "core/object/object.h"
-#include "core/variant/dictionary.h"
 #include "core/variant/array.h"
+#include "core/variant/dictionary.h"
 
 // Forward-declare the Swift bridge (exposed to ObjC via vision_plugin-Swift.h)
 @class VisionSwiftBridge;
@@ -56,37 +56,37 @@ extern const char *FACE_MESH_FAILED_SIGNAL_NAME;
 //     On completion one of the two signals above is emitted on the main thread.
 // ---------------------------------------------------------------------------
 class VisionPlugin : public Object {
-    GDCLASS(VisionPlugin, Object);
+	GDCLASS(VisionPlugin, Object);
 
 private:
-    // Singleton instance – accessed from the ObjC callback shim.
-    static VisionPlugin *instance;
+	// Singleton instance – accessed from the ObjC callback shim.
+	static VisionPlugin *instance;
 
-    // Retained ObjC/Swift bridge that drives MediaPipe on a background queue.
-    VisionSwiftBridge *swiftBridge;
+	// Retained ObjC/Swift bridge that drives MediaPipe on a background queue.
+	VisionSwiftBridge *swiftBridge;
 
-    static void _bind_methods();
+	static void _bind_methods();
 
-    // Helpers used by the ObjC callback shim (vision_plugin.mm) to convert
-    // NSDictionary trees coming from Swift into Godot Variant trees and then
-    // emit the appropriate signal.
-    static Variant ns_to_variant(id obj);
-    static Dictionary ns_dict_to_godot(NSDictionary *nsDict);
-    static Array     ns_array_to_godot(NSArray     *nsArray);
+	// Helpers used by the ObjC callback shim (vision_plugin.mm) to convert
+	// NSDictionary trees coming from Swift into Godot Variant trees and then
+	// emit the appropriate signal.
+	static Variant ns_to_variant(id obj);
+	static Dictionary ns_dict_to_godot(NSDictionary *nsDict);
+	static Array ns_array_to_godot(NSArray *nsArray);
 
 public:
-    // Called from GDScript: plugin.scan_face(image_info_dict)
-    void scan_face(Dictionary image_dict);
+	// Called from GDScript: plugin.scan_face(image_info_dict)
+	void scan_face(Dictionary image_dict);
 
-    // Called by the ObjC callback shim after the Swift bridge resolves.
-    void on_face_mesh_ready(NSDictionary *result_ns);
-    void on_face_mesh_failed(NSDictionary *error_ns);
+	// Called by the ObjC callback shim after the Swift bridge resolves.
+	void on_face_mesh_ready(NSDictionary *result_ns);
+	void on_face_mesh_failed(NSDictionary *error_ns);
 
-    // Singleton accessor used by the ObjC callback shim.
-    static VisionPlugin *get_singleton() { return instance; }
+	// Singleton accessor used by the ObjC callback shim.
+	static VisionPlugin *get_singleton() { return instance; }
 
-    VisionPlugin();
-    ~VisionPlugin();
+	VisionPlugin();
+	~VisionPlugin();
 };
 
 #endif /* vision_plugin_h */

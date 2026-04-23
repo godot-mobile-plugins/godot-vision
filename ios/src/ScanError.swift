@@ -22,37 +22,37 @@ import Foundation
 // ---------------------------------------------------------------------------
 struct ScanError: Error {
 
-    // -----------------------------------------------------------------------
-    // Error code enum
-    //
-    // Raw Int values are deliberately fixed and must not be reordered so that
-    // GDScript can compare against numeric constants that match Android.
-    // -----------------------------------------------------------------------
-    enum Code: Int {
-        case none           = 0
-        case invalidImage   = 1
-        case noFaceDetected = 2   // Android: NO_CODE_DETECTED
-        case scannerFailure = 3
-        case internalError  = 4
-    }
+	// -----------------------------------------------------------------------
+	// Error code enum
+	//
+	// Raw Int values are deliberately fixed and must not be reordered so that
+	// GDScript can compare against numeric constants that match Android.
+	// -----------------------------------------------------------------------
+	enum Code: Int {
+		case none           = 0
+		case invalidImage   = 1
+		case noFaceDetected = 2   // Android: NO_CODE_DETECTED
+		case scannerFailure = 3
+		case internalError  = 4
+	}
 
-    // -----------------------------------------------------------------------
-    // Properties
-    // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	// Properties
+	// -----------------------------------------------------------------------
 
-    let code:        Code
-    let description: String
+	let code: Code
+	let description: String
 
-    // -----------------------------------------------------------------------
-    // buildNSDictionary
-    //
-    // Produces the NSDictionary emitted with the face_mesh_failed signal:
-    //   { "code": Int, "description": String }
-    // -----------------------------------------------------------------------
-    func buildNSDictionary() -> NSDictionary {
-        return [
-            "code":        NSNumber(value: code.rawValue),
-            "description": description as NSString
-        ]
-    }
+	// -----------------------------------------------------------------------
+	// buildNSDictionary
+	//
+	// Produces the NSDictionary emitted with the face_mesh_failed signal:
+	//   { "code": Int, "description": String }
+	// -----------------------------------------------------------------------
+	func buildNSDictionary() -> NSDictionary {
+		return [
+			"code": NSNumber(value: code.rawValue),
+			"description": description as NSString
+		]
+	}
 }
