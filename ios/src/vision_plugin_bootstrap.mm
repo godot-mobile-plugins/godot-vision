@@ -13,8 +13,8 @@
 VisionPlugin *vision_plugin;
 
 void vision_plugin_init() {
-	os_log_debug(vision_log, "VisionPlugin: Initializing plugin at timestamp: %f",
-			[[NSDate date] timeIntervalSince1970]);
+	os_log_debug(
+			vision_log, "VisionPlugin: Initializing plugin at timestamp: %f", [[NSDate date] timeIntervalSince1970]);
 
 	vision_plugin = memnew(VisionPlugin);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("VisionPlugin", vision_plugin));

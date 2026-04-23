@@ -1,3 +1,7 @@
 [
-
+	{
+		"url": "https://github.com/paescebu/SwiftTasksVision.git",
+		"version": "0.10.21",
+		"products": ["SwiftTasksVision"]
+	}
 ]
