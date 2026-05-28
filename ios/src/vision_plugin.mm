@@ -55,18 +55,37 @@ VisionPlugin *VisionPlugin::instance = nullptr;
 // ---------------------------------------------------------------------------
 // _bind_methods
 //
-// Registers the GDScript-callable method and the two signals with Godot's
+// Registers the GDScript-callable methods and the two signals with Godot's
 // ClassDB.  Must be kept in sync with the signal/method names used in
 // GDScript.
 // ---------------------------------------------------------------------------
 void VisionPlugin::_bind_methods() {
-	// Method
+	// Methods
 	ClassDB::bind_method(D_METHOD("scan_face", "image_dict"), &VisionPlugin::scan_face);
+	ClassDB::bind_method(D_METHOD("set_max_faces", "max_faces"), &VisionPlugin::set_max_faces);
 
 	// Signals
 	ADD_SIGNAL(MethodInfo(String(FACE_MESH_READY_SIGNAL_NAME), PropertyInfo(Variant::DICTIONARY, "result")));
-
 	ADD_SIGNAL(MethodInfo(String(FACE_MESH_FAILED_SIGNAL_NAME), PropertyInfo(Variant::DICTIONARY, "error")));
+}
+
+// ---------------------------------------------------------------------------
+// set_max_faces
+//
+// Called from GDScript to change the maximum number of faces reported per
+// scan.  Delegates to VisionSwiftBridge.setMaxFaces(_:), which clamps the
+// value to [1, 20] and re-initialises the MediaPipe service if the limit
+// has changed.
+// ---------------------------------------------------------------------------
+void VisionPlugin::set_max_faces(int max_faces) {
+	os_log_debug(vision_log, "VisionPlugin::set_max_faces(%d)", max_faces);
+
+	if (swiftBridge == nil) {
+		os_log_error(vision_log, "VisionPlugin: swiftBridge is nil – not initialised");
+		return;
+	}
+
+	[swiftBridge setMaxFaces:(NSInteger)max_faces];
 }
 
 // ---------------------------------------------------------------------------

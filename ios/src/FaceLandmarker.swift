@@ -1,7 +1,7 @@
 //
 // © 2026-present https://github.com/cengiz-pz
 //
-// FaceLandmarker.swift
+
 //
 // Wraps MediaPipe Tasks Vision's FaceLandmarker to provide the same 468-point
 // face-mesh output as the Android ML Kit implementation.
@@ -57,8 +57,12 @@ final class FaceLandmarkerService {
 	// Constants
 	// -----------------------------------------------------------------------
 
-	/// Maximum number of faces the detector will report.
-	private static let maxFaces = 5
+	/// Default upper bound on reported faces when the caller does not specify.
+	static let defaultMaxFaces = 5
+
+	/// Hard upper bound accepted by this service.  MediaPipe's own limit is
+	/// implementation-defined; 20 is a reasonable ceiling for real-time use.
+	static let absoluteMaxFaces = 20
 
 	/// The bundled MediaPipe model asset name (without extension).
 	private static let modelAssetName = "face_landmarker"
@@ -73,20 +77,25 @@ final class FaceLandmarkerService {
 	// -----------------------------------------------------------------------
 	// Initialiser
 	//
+	// - Parameter numFaces: Maximum number of faces to detect per frame.
+	//   Clamped to 1 … absoluteMaxFaces.  Defaults to defaultMaxFaces (5).
+	//
 	// Throws ServiceError if the model asset is missing or MediaPipe fails to
 	// initialise.
 	// -----------------------------------------------------------------------
-	init() throws {
+	init(numFaces: Int = FaceLandmarkerService.defaultMaxFaces) throws {
 		guard let modelURL = Bundle.main.url(
 				forResource: Self.modelAssetName,
 				withExtension: Self.modelAssetExtension) else {
 			throw ServiceError.modelNotFound
 		}
 
+		let clampedNumFaces = max(1, min(numFaces, Self.absoluteMaxFaces))
+
 		let options = MPFaceLandmarkerOptions()
 		options.baseOptions.modelAssetPath = modelURL.path
 		options.runningMode           = .image
-		options.numFaces              = Self.maxFaces
+		options.numFaces              = clampedNumFaces
 		// Blendshapes and transformation matrices are not needed for this
 		// plugin's feature set; keep them off to save compute.
 		options.outputFaceBlendshapes              = false

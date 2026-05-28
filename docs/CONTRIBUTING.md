@@ -154,7 +154,7 @@ val pluginConfig = loadPluginConfig()
 val godotConfig  = loadGodotConfig()
 val iosConfig    = loadIosConfig()
 
-println(pluginConfig.pluginName)        // "VisionPlugin"
+println(pluginConfig.pluginName)        // "*Plugin"
 println(godotConfig.godotAarUrl)        // full GitHub download URL
 println(iosConfig.frameworks)           // List<String> - already parsed
 ```
@@ -1524,5 +1524,3 @@ Include:
 - [Android Developer Documentation](https://developer.android.com/)
 - [iOS Developer Documentation](https://developer.apple.com/documentation/)
 - [Gradle Documentation](https://docs.gradle.org/)
-
----

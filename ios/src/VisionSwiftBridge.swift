@@ -1,7 +1,7 @@
 //
 // © 2026-present https://github.com/cengiz-pz
 //
-// VisionSwiftBridge.swift
+
 //
 // Acts as the seam between the ObjC++ VisionPlugin and the pure-Swift
 // FaceLandmarkerService.  All public symbols are annotated @objc so that
@@ -10,7 +10,7 @@
 //
 // Thread model
 // -----------
-//   • scan_face is called on the Godot main thread.
+//   • scan_face / set_max_faces are called on the Godot main thread.
 //   • All MediaPipe work is dispatched to a private serial background queue
 //     so the game loop is never blocked.
 //   • Delegate callbacks are delivered back on the main thread via
@@ -51,6 +51,12 @@ public class VisionSwiftBridge: NSObject {
 	@objc public var delegate: VisionSwiftBridgeDelegate?
 
 	var landmarkerService: (any FaceDetecting)?
+
+	// Maximum number of faces passed to FaceLandmarkerService on (re-)init.
+	// Defaults to FaceLandmarkerService.defaultMaxFaces (5).
+	// GDScript callers use set_max_faces() in VisionPlugin to change this.
+	private var maxFaces: Int = FaceLandmarkerService.defaultMaxFaces
+
 	// Stores the error thrown by FaceLandmarkerService.init() so it can be
 	// forwarded in full to GDScript rather than replaced with the generic
 	// "Landmarker service not initialised" message.
@@ -63,17 +69,43 @@ public class VisionSwiftBridge: NSObject {
 	// initialize
 	//
 	// Called from the VisionPlugin constructor.  Safe to call multiple times
-	// (subsequent calls are no-ops).
+	// (subsequent calls are no-ops when the service is already running).
 	// -----------------------------------------------------------------------
 	@objc public func initialize() {
 		guard landmarkerService == nil else { return }
 		do {
-			landmarkerService = try FaceLandmarkerService()
+			landmarkerService = try FaceLandmarkerService(numFaces: maxFaces)
 			initializationError = nil
 		} catch {
 			initializationError = error
 			NSLog("[VisionSwiftBridge] Failed to initialise FaceLandmarkerService: \(error)")
 		}
+	}
+
+	// -----------------------------------------------------------------------
+	// setMaxFaces(_:)
+	//
+	// Updates the maximum number of faces the detector will report and
+	// re-initialises the underlying FaceLandmarkerService with the new limit.
+	//
+	// Call this from GDScript via VisionPlugin.set_max_faces(n) before or
+	// after the first scan_face(); the service is restarted transparently.
+	//
+	// The value is clamped to [1, FaceLandmarkerService.absoluteMaxFaces] here
+	// so that the stored maxFaces always reflects the effective limit.
+	// -----------------------------------------------------------------------
+	@objc public func setMaxFaces(_ value: Int) {
+		let clamped = max(1, min(value, FaceLandmarkerService.absoluteMaxFaces))
+		guard clamped != maxFaces else { return }   // no-op if unchanged
+
+		maxFaces = clamped
+
+		// Tear down the existing service so initialize() will rebuild it with
+		// the updated numFaces parameter.
+		landmarkerService = nil
+		initializationError = nil
+
+		initialize()
 	}
 
 	// -----------------------------------------------------------------------
