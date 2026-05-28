@@ -14,16 +14,13 @@
 
 plugins {
     `kotlin-dsl`
+    `java-gradle-plugin`
     alias(libs.plugins.kotlin.serialization)
 }
 
-dependencies {
-    implementation(libs.kotlinx.serialization.json)
-}
-
-sourceSets {
-    main {
-        java.srcDirs("src/main/kotlin")
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -31,7 +28,41 @@ kotlin {
     jvmToolchain(17)
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    targetCompatibility = "17"
-    sourceCompatibility = "17"
+gradlePlugin {
+    plugins {
+        create("baseConventions") {
+            id = "base-conventions"
+            implementationClass = "BaseConventionsPlugin"
+            description = "Godot Mobile Plugins base conventions plugin"
+        }
+    }
+}
+
+val buildLogicDependencies =
+    extensions
+        .getByType<VersionCatalogsExtension>()
+        .named("libs")
+        .run {
+            libraryAliases
+                .filter { it.startsWith("build.logic.") }
+                .map { findLibrary(it).get().get() }
+        }
+
+dependencies {
+    implementation(gradleKotlinDsl())
+
+    buildLogicDependencies.forEach {
+        implementation(it)
+    }
+}
+
+sourceSets {
+    main {
+        java.srcDirs("src/main/java")
+        resources.srcDirs("src/main/resources")
+    }
+}
+
+kotlin.sourceSets.getByName("main") {
+    kotlin.srcDirs("src/main/kotlin", "src/main/java")
 }

@@ -37,7 +37,7 @@ public class VisionPlugin extends GodotPlugin {
 	static final String FACE_MESH_READY_SIGNAL = "face_mesh_ready";
 	static final String FACE_MESH_FAILED_SIGNAL = "face_mesh_failed";
 
-	// Detector is held as a field so it can be closed on destroy.
+	/** Detector is held as a field so it can be closed and recreated. */
 	private FaceMeshDetector faceMeshDetector;
 
 	public VisionPlugin(Godot godot) {
@@ -65,11 +65,25 @@ public class VisionPlugin extends GodotPlugin {
 	@Override
 	public void onGodotSetupCompleted() {
 		super.onGodotSetupCompleted();
+		initDetector();
+	}
 
-		// Build the detector once and reuse it across calls.
-		FaceMeshDetectorOptions options = new FaceMeshDetectorOptions.Builder().build();
-		faceMeshDetector = FaceMeshDetection.getClient(options);
-		Log.d(LOG_TAG, "FaceMeshDetector initialised");
+	// -------------------------------------------------------------------------
+	// set_max_faces
+	// Called from GDScript: _plugin_singleton.set_max_faces(n)
+	//
+	// NOTE: ML Kit's FaceMeshDetectorOptions.Builder does not expose a
+	// setMaxNumFaces() method — the face limit is fixed internally by the SDK
+	// (default 5).  This method exists solely to keep the GDScript API
+	// consistent with the iOS plugin, which does support a configurable limit
+	// via MediaPipe.  Calls on Android are silently accepted and logged so
+	// cross-platform GDScript code that calls set_max_faces() does not error.
+	// -------------------------------------------------------------------------
+	@UsedByGodot
+	public void set_max_faces(int aMaxFaces) {
+		Log.d(LOG_TAG, "set_max_faces(" + aMaxFaces + ") called – "
+				+ "ML Kit FaceMeshDetector does not support a configurable face limit; "
+				+ "the SDK default (5) is used on Android.");
 	}
 
 	// -------------------------------------------------------------------------
@@ -144,6 +158,26 @@ public class VisionPlugin extends GodotPlugin {
 
 	@Override
 	public void onMainDestroy() {
+		closeDetector();
+	}
+
+	// -------------------------------------------------------------------------
+	// Private helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Creates (or recreates) the FaceMeshDetector using the current maxFaces
+	 * value.  Any previously open detector is closed first to release resources.
+	 */
+	private void initDetector() {
+		closeDetector();
+		FaceMeshDetectorOptions options = new FaceMeshDetectorOptions.Builder().build();
+		faceMeshDetector = FaceMeshDetection.getClient(options);
+		Log.d(LOG_TAG, "FaceMeshDetector initialised");
+	}
+
+	/** Closes and nulls the current detector, suppressing any IOException. */
+	private void closeDetector() {
 		if (faceMeshDetector != null) {
 			try {
 				((Closeable) faceMeshDetector).close();

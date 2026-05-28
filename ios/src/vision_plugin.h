@@ -54,6 +54,19 @@ extern const char *FACE_MESH_FAILED_SIGNAL_NAME;
 //       { "buffer": PackedByteArray, "width": int, "height": int,
 //         "format": int, "has_mipmaps": bool }
 //     On completion one of the two signals above is emitted on the main thread.
+//
+//   set_max_faces(max_faces: int)
+//     Sets the maximum number of faces the detector will report per frame.
+//     Accepts values in [1, 20]; values outside this range are clamped.
+//     Defaults to 5.  May be called at any time; takes effect immediately
+//     (the underlying MediaPipe service is restarted transparently).
+//     Call this before the first scan_face() for zero-overhead startup, or
+//     at any point during play to change the limit on the fly.
+//
+//     GDScript example:
+//       var vision = Engine.get_singleton("VisionPlugin")
+//       vision.set_max_faces(10)
+//       vision.scan_face(image_info)
 // ---------------------------------------------------------------------------
 class VisionPlugin : public Object {
 	GDCLASS(VisionPlugin, Object);
@@ -77,6 +90,11 @@ private:
 public:
 	// Called from GDScript: plugin.scan_face(image_info_dict)
 	void scan_face(Dictionary image_dict);
+
+	// Called from GDScript: plugin.set_max_faces(n)
+	// Forwards to VisionSwiftBridge.setMaxFaces(_:) which re-initialises
+	// FaceLandmarkerService with the updated numFaces parameter.
+	void set_max_faces(int max_faces);
 
 	// Called by the ObjC callback shim after the Swift bridge resolves.
 	void on_face_mesh_ready(NSDictionary *result_ns);

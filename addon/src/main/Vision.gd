@@ -11,7 +11,19 @@ signal face_mesh_failed(error: ScanError)
 
 const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 
+## Default maximum number of faces reported per scan_face() call.
+## Mirrors VisionPlugin.java DEFAULT_MAX_FACES and FaceLandmarkerService.defaultMaxFaces.
+const DEFAULT_MAX_FACES: int = 5
+
+## Hard upper bound accepted by the underlying plugins on both platforms.
+const ABSOLUTE_MAX_FACES: int = 20
+
 var _plugin_singleton: Object
+
+## Current face limit.  Updated by set_max_faces(); re-applied whenever the
+## plugin singleton is (re-)connected so that an app-resume does not silently
+## reset the limit back to the plugin's own default.
+var _max_faces: int = DEFAULT_MAX_FACES
 
 
 func _ready() -> void:
@@ -35,17 +47,48 @@ func _update_plugin() -> void:
 func _connect_signals() -> void:
 	_plugin_singleton.connect("face_mesh_ready", _on_face_mesh_ready)
 	_plugin_singleton.connect("face_mesh_failed", _on_face_mesh_failed)
+	# Re-apply the stored face limit in case the singleton was restarted
+	# (e.g. after an app-resume) and reverted to its own default.
+	_plugin_singleton.set_max_faces(_max_faces)
+
+
+# ---------------------------------------------------------------------------
+# set_max_faces
+#
+# Sets the maximum number of faces the detector will report per frame.
+# Accepts values in [1, ABSOLUTE_MAX_FACES]; values outside this range
+# are clamped by the underlying plugin.  Defaults to DEFAULT_MAX_FACES (5).
+#
+# May be called before or after the first scan_face(); the new limit takes
+# effect on the next call.  The value is remembered and automatically
+# re-applied if the plugin singleton is reconnected after an app-resume.
+#
+# Platform notes:
+#   iOS   – fully supported; MediaPipe rebuilds the landmarker with the new
+#            limit immediately.
+#   Android – ML Kit's FaceMeshDetectorOptions.Builder does not expose a
+#              max-faces setting, so this call is accepted but has no effect;
+#              the SDK default of 2 faces is always used on Android.
+#
+# Example:
+#   $Vision.set_max_faces(10)
+#   $Vision.scan_face(image)
+# ---------------------------------------------------------------------------
+func set_max_faces(a_max_faces: int) -> void:
+	_max_faces = clampi(a_max_faces, 1, ABSOLUTE_MAX_FACES)
+	if _plugin_singleton:
+		_plugin_singleton.set_max_faces(_max_faces)
 
 
 # ---------------------------------------------------------------------------
 # scan_face
-# Sends an image to the Android plugin for ML Kit face mesh detection.
+# Sends an image to the plugin for face mesh detection.
 # The image is automatically converted to FORMAT_RGBA8 when necessary.
 # Listen to the face_mesh_ready / face_mesh_failed signals for results.
 # ---------------------------------------------------------------------------
 func scan_face(a_image: Image) -> void:
 	if _plugin_singleton:
-		# ML Kit expects RGBA8 raw bytes (matches Godot's FORMAT_RGBA8 layout).
+		# ML Kit / MediaPipe expects RGBA8 raw bytes (matches Godot's FORMAT_RGBA8 layout).
 		var scan_image := a_image
 		if scan_image.get_format() != Image.FORMAT_RGBA8:
 			scan_image = Image.new()
@@ -69,7 +112,7 @@ func _on_face_mesh_failed(a_dict: Dictionary) -> void:
 # FACE MESH DRAWING UTILITIES
 #
 # Both methods accept the FaceScanResult emitted by the face_mesh_ready signal.
-# Its structure (set by VisionPlugin.java) is:
+# Its structure is:
 #
 #   FaceScanResult
 #     get_image_width()  -> int

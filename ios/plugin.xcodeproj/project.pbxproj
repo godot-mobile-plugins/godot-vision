@@ -34,16 +34,6 @@
 		07F78B652F98BCC50043D588 /* godot_stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07F78B642F98BCBC0043D588 /* godot_stubs.mm */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		0721C6A32F82629000A9BA75 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 90CAAA8C24E71FF10013969F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 90CAAA9324E71FF10013969F;
-			remoteInfo = vision_plugin;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		90CAAA9224E71FF10013969F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -108,7 +98,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		074931A22F984F020028C400 /* fixtures */ = {
+		073E18652F835E0400D42B57 /* fixtures */ = {
 			isa = PBXGroup;
 			children = (
 				07F78B642F98BCBC0043D588 /* godot_stubs.mm */,
@@ -119,7 +109,7 @@
 			path = fixtures;
 			sourceTree = "<group>";
 		};
-		074931AA2F984F020028C400 /* unit */ = {
+		073E186F2F835E0400D42B57 /* unit */ = {
 			isa = PBXGroup;
 			children = (
 				074931A32F984F020028C400 /* FaceLandmarkerServiceTests.swift */,
@@ -133,16 +123,16 @@
 			path = unit;
 			sourceTree = "<group>";
 		};
-		074931AB2F984F020028C400 /* test */ = {
+		073E18702F835E0400D42B57 /* test */ = {
 			isa = PBXGroup;
 			children = (
-				074931A22F984F020028C400 /* fixtures */,
-				074931AA2F984F020028C400 /* unit */,
+				073E18652F835E0400D42B57 /* fixtures */,
+				073E186F2F835E0400D42B57 /* unit */,
 			);
 			path = test;
 			sourceTree = "<group>";
 		};
-		074B0D982F9325E700302C99 /* src */ = {
+		07C98E092F3348BA002D3480 /* src */ = {
 			isa = PBXGroup;
 			children = (
 				074931B62F984F420028C400 /* FaceDetecting.swift */,
@@ -167,8 +157,8 @@
 		90CAAA8B24E71FF10013969F = {
 			isa = PBXGroup;
 			children = (
-				074931AB2F984F020028C400 /* test */,
-				074B0D982F9325E700302C99 /* src */,
+				073E18702F835E0400D42B57 /* test */,
+				07C98E092F3348BA002D3480 /* src */,
 				90CAAA9524E71FF10013969F /* Products */,
 				90CAAAA824E72A8A0013969F /* Frameworks */,
 			);
@@ -204,7 +194,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				0721C6A42F82629000A9BA75 /* PBXTargetDependency */,
 			);
 			name = vision_plugin_tests;
 			packageProductDependencies = (
@@ -247,7 +236,6 @@
 				TargetAttributes = {
 					0721C69D2F82629000A9BA75 = {
 						CreatedOnToolsVersion = 26.0;
-						LastSwiftMigration = 2600;
 					};
 					90CAAA9324E71FF10013969F = {
 						CreatedOnToolsVersion = 11.6;
@@ -326,14 +314,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		0721C6A42F82629000A9BA75 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 90CAAA9324E71FF10013969F /* vision_plugin */;
-			targetProxy = 0721C6A32F82629000A9BA75 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		0721C6A52F82629000A9BA75 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -356,7 +336,7 @@
 					"$(SRCROOT)/test/fixtures",
 					"$(SRCROOT)/src",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -418,6 +398,8 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
+					"-undefined",
+					dynamic_lookup,
 					"$(GODOT_DIR)/bin/libgodot.ios.template_debug.$(CURRENT_ARCH).simulator.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.godotengine.plugin.plugin-template-unit-tests";
@@ -454,7 +436,7 @@
 					"$(SRCROOT)/test/fixtures",
 					"$(SRCROOT)/src",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -507,6 +489,8 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
+					"-undefined",
+					dynamic_lookup,
 					"$(GODOT_DIR)/bin/libgodot.ios.template_debug.$(CURRENT_ARCH).simulator.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.godotengine.plugin.plugin-template-unit-tests";
@@ -573,7 +557,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -627,7 +611,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -647,7 +631,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/src",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -730,7 +714,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/src",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
