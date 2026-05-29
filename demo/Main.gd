@@ -25,7 +25,6 @@ extends Node
 var _camera: CameraInfo
 var _scan_texture: ImageTexture = null
 var _mesh_texture: ImageTexture = null
-var _last_image: Image
 
 var _active_texture_rect: TextureRect
 
@@ -110,7 +109,6 @@ func _on_native_camera_frame_available(a_info: FrameInfo) -> void:
 		return
 
 	_print_to_screen("Scanning received frame")
-	_last_image = image
 	vision_node.scan_face(image)
 
 	# Force execution on main thread
@@ -127,13 +125,15 @@ func _on_native_camera_camera_permission_denied() -> void:
 
 
 func _on_vision_face_mesh_ready(a_result: FaceScanResult) -> void:
+	var __processed_image := a_result.get_image().to_image()
+
 	# Start from the mesh wireframe overlay or a plain copy of the camera frame.
 	var __mesh_image: Image
 	if mesh_check_box.button_pressed:
-		__mesh_image = Vision.draw_face_mesh_on_image(_last_image, a_result, mesh_color)
+		__mesh_image = Vision.draw_face_mesh_on_image(__processed_image, a_result, mesh_color)
 	else:
 		__mesh_image = Image.new()
-		__mesh_image.copy_from(_last_image)
+		__mesh_image.copy_from(__processed_image)
 		if __mesh_image.get_format() != Image.FORMAT_RGBA8:
 			__mesh_image.convert(Image.FORMAT_RGBA8)
 

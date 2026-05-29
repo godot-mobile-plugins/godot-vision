@@ -48,7 +48,7 @@ const char *FACE_MESH_FAILED_SIGNAL_NAME = "face_mesh_failed";
 @end
 
 // ---------------------------------------------------------------------------
-// VisionPlugin – static members
+// VisionPlugin - static members
 // ---------------------------------------------------------------------------
 VisionPlugin *VisionPlugin::instance = nullptr;
 
@@ -81,7 +81,7 @@ void VisionPlugin::set_max_faces(int max_faces) {
 	os_log_debug(vision_log, "VisionPlugin::set_max_faces(%d)", max_faces);
 
 	if (swiftBridge == nil) {
-		os_log_error(vision_log, "VisionPlugin: swiftBridge is nil – not initialised");
+		os_log_error(vision_log, "VisionPlugin: swiftBridge is nil - not initialised");
 		return;
 	}
 
@@ -91,22 +91,25 @@ void VisionPlugin::set_max_faces(int max_faces) {
 // ---------------------------------------------------------------------------
 // scan_face
 //
-// Entry point from GDScript.  Validates the incoming dictionary and
-// delegates the actual MediaPipe work to the Swift bridge.
+// Entry point from GDScript.  Validates the incoming dictionary, builds a
+// full imageInfo NSDictionary from all fields present in the Godot image
+// dict (buffer, width, height, format, has_mipmaps), and delegates the
+// actual MediaPipe work to the Swift bridge together with the imageInfo so
+// that the result can carry a complete ImageInfo back to GDScript.
 // ---------------------------------------------------------------------------
 void VisionPlugin::scan_face(Dictionary image_dict) {
 	os_log_debug(vision_log, "VisionPlugin::scan_face()");
 
 	if (swiftBridge == nil) {
-		os_log_error(vision_log, "VisionPlugin: swiftBridge is nil – not initialised");
+		os_log_error(vision_log, "VisionPlugin: swiftBridge is nil - not initialised");
 		NSDictionary *err = @{@"code" : @(4 /* INTERNAL_ERROR */), @"description" : @"Swift bridge not initialised"};
 		on_face_mesh_failed(err);
 		return;
 	}
 
 	// ---- Extract buffer ---------------------------------------------------
-	// Godot PackedByteArray is passed through JNI/ObjC bridge as a raw
-	// byte array.  On iOS it arrives as a PoolByteArray / PackedByteArray.
+	// Godot PackedByteArray is passed through the ObjC bridge as a raw
+	// PackedByteArray Variant.  On iOS it arrives as a PACKED_BYTE_ARRAY.
 	Variant buf_var = image_dict["buffer"];
 	if (buf_var.get_type() != Variant::PACKED_BYTE_ARRAY) {
 		NSDictionary *err = @{@"code" : @(1 /* INVALID_IMAGE */), @"description" : @"buffer key missing or wrong type"};
@@ -118,7 +121,7 @@ void VisionPlugin::scan_face(Dictionary image_dict) {
 	int byte_count = (int)pba.size();
 
 	// ---- Extract width / height -------------------------------------------
-	int width = (int)(int64_t)image_dict["width"];
+	int width  = (int)(int64_t)image_dict["width"];
 	int height = (int)(int64_t)image_dict["height"];
 
 	if (width <= 0 || height <= 0 || byte_count <= 0) {
@@ -129,10 +132,40 @@ void VisionPlugin::scan_face(Dictionary image_dict) {
 		return;
 	}
 
+	// ---- Extract optional fields -----------------------------------------
+	// format defaults to 4 (Godot Image.FORMAT_RGBA8); scan_face() in Vision.gd
+	// always converts to RGBA8 before calling the plugin, but we store the
+	// actual value from the dict so round-tripping through ImageInfo is exact.
+	int format = 4; // Image.FORMAT_RGBA8
+	Variant fmt_var = image_dict["format"];
+	if (fmt_var.get_type() == Variant::INT) {
+		format = (int)(int64_t)fmt_var;
+	}
+
+	bool has_mipmaps = false;
+	Variant mm_var = image_dict["has_mipmaps"];
+	if (mm_var.get_type() == Variant::BOOL) {
+		has_mipmaps = (bool)mm_var;
+	}
+
 	// Wrap the raw bytes in NSData (copy so the PackedByteArray can be freed).
 	NSData *bufferData = [NSData dataWithBytes:bytes length:(NSUInteger)byte_count];
 
-	[swiftBridge scanFaceWithBuffer:bufferData width:(NSInteger)width height:(NSInteger)height];
+	// ---- Build the imageInfo NSDictionary ---------------------------------
+	// This mirrors the GDScript ImageInfo dictionary layout so GDScript can
+	// reconstruct an ImageInfo object from result.get_image().get_raw_data().
+	NSDictionary *imageInfoDict = @{
+		@"buffer":      bufferData,
+		@"width":       @(width),
+		@"height":      @(height),
+		@"format":      @(format),
+		@"has_mipmaps": @(has_mipmaps ? 1 : 0)
+	};
+
+	[swiftBridge scanFaceWithBuffer:bufferData
+						  imageInfo:imageInfoDict
+							  width:(NSInteger)width
+							 height:(NSInteger)height];
 }
 
 // ---------------------------------------------------------------------------
@@ -179,11 +212,23 @@ Variant VisionPlugin::ns_to_variant(id obj) {
 		return Variant(ns_dict_to_godot((NSDictionary *)obj));
 	}
 
+	// NSData carrying raw pixel bytes - convert to PackedByteArray so that
+	// GDScript's ImageInfo.get_buffer() returns a usable PackedByteArray.
+	if ([obj isKindOfClass:[NSData class]]) {
+		NSData *data = (NSData *)obj;
+		PackedByteArray pba;
+		pba.resize((int)data.length);
+		if (data.length > 0) {
+			memcpy(pba.ptrw(), data.bytes, data.length);
+		}
+		return Variant(pba);
+	}
+
 	if ([obj isKindOfClass:[NSNull class]]) {
 		return Variant();
 	}
 
-	// Fallback – log and return nil variant.
+	// Fallback - log and return nil variant.
 	os_log_error(vision_log, "ns_to_variant: unsupported type %{public}s", [NSStringFromClass([obj class]) UTF8String]);
 	return Variant();
 }

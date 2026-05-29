@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit tests for {@link FaceMeshInfo}.
  *
  * Covers:
- *  – {@code buildRawData()} top-level key presence ("points", "triangles", "contours")
- *  – correct array lengths for points and triangles
- *  – x/y normalisation: pixel coord ÷ image dimension = [0, 1] double
- *  – z depth is passed through unchanged
- *  – triangle vertex indices map to the correct landmark indices
- *  – all 12 contour keys are present in the contours dictionary
- *  – each contour array contains the expected normalised coordinates
+ *  - {@code buildRawData()} top-level key presence ("points", "triangles", "contours")
+ *  - correct array lengths for points and triangles
+ *  - x/y normalisation: pixel coord ÷ image dimension = [0, 1] double
+ *  - z depth is passed through unchanged
+ *  - triangle vertex indices map to the correct landmark indices
+ *  - all 12 contour keys are present in the contours dictionary
+ *  - each contour array contains the expected normalised coordinates
  */
 @DisplayName("FaceMeshInfo")
 class FaceMeshInfoTest {

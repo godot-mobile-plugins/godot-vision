@@ -39,7 +39,7 @@ final class FaceLandmarkerService {
 	/// contour subsets.
 	struct DetectedFace {
 		/// 468 landmarks with (x, y, z) normalised to [0, 1] for x/y and
-		/// relative depth for z – matches the Android plugin's layout exactly.
+		/// relative depth for z - matches the Android plugin's layout exactly.
 		let landmarks: [(x: Float, y: Float, z: Float)]
 	}
 

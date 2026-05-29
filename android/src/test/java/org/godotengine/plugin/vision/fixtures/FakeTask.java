@@ -30,7 +30,7 @@ import com.google.android.gms.tasks.Task;
  * when(mockDetector.process(any())).thenReturn(FakeTask.failure(new RuntimeException("boom")));
  * }</pre>
  *
- * @param <T> the result type – typically {@code List<FaceMesh>}
+ * @param <T> the result type - typically {@code List<FaceMesh>}
  */
 public final class FakeTask<T> extends Task<T> {
 

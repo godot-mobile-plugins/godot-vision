@@ -9,7 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** Marker annotation – kept at runtime so reflection-based checks still work. */
+/** Marker annotation - kept at runtime so reflection-based checks still work. */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface UsedByGodot {

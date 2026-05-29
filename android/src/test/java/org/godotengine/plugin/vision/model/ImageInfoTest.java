@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit tests for {@link ImageInfo}.
  *
  * Covers:
- *  – default sentinel values when constructed from an empty dictionary
- *  – round-trip fidelity for every setter / getter pair
- *  – type coercion: Godot stores integers as {@code long}; {@code toInt()} must
+ *  - default sentinel values when constructed from an empty dictionary
+ *  - round-trip fidelity for every setter / getter pair
+ *  - type coercion: Godot stores integers as {@code long}; {@code toInt()} must
  *    convert transparently
- *  – {@code getRawData()} returns the same backing dictionary, not a copy
+ *  - {@code getRawData()} returns the same backing dictionary, not a copy
  */
 @DisplayName("ImageInfo")
 class ImageInfoTest {

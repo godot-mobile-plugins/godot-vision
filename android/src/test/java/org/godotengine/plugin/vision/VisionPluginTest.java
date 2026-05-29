@@ -100,10 +100,10 @@ class VisionPluginTest {
 		}
 	}
 
-	// -- scan_face – valid image, faces detected ---------------------------
+	// -- scan_face - valid image, faces detected ---------------------------
 
 	@Nested
-	@DisplayName("scan_face() – success path")
+	@DisplayName("scan_face() - success path")
 	class ScanFaceSuccess {
 
 		@BeforeEach
@@ -144,19 +144,21 @@ class VisionPluginTest {
 		}
 
 		@Test
-		@DisplayName("payload contains 'image_width' equal to image width")
+		@DisplayName("payload 'image' sub-dictionary contains width equal to image width")
 		void payloadImageWidth() {
 			plugin.scan_face(ImageInfoFixtures.validImageDict());
-			Dictionary payload = plugin.lastSignalArg();
-			assertEquals((long) FaceMeshFixtures.IMAGE_WIDTH, payload.get("image_width"));
+			Dictionary payload = (Dictionary) plugin.lastSignalArg();
+			Dictionary imageDict = (Dictionary) payload.get("image");
+			assertEquals((long) FaceMeshFixtures.IMAGE_WIDTH, imageDict.get("width"));
 		}
 
 		@Test
-		@DisplayName("payload contains 'image_height' equal to image height")
+		@DisplayName("payload 'image' sub-dictionary contains height equal to image height")
 		void payloadImageHeight() {
 			plugin.scan_face(ImageInfoFixtures.validImageDict());
-			Dictionary payload = plugin.lastSignalArg();
-			assertEquals((long) FaceMeshFixtures.IMAGE_HEIGHT, payload.get("image_height"));
+			Dictionary payload = (Dictionary) plugin.lastSignalArg();
+			Dictionary imageDict = (Dictionary) payload.get("image");
+			assertEquals((long) FaceMeshFixtures.IMAGE_HEIGHT, imageDict.get("height"));
 		}
 
 		@Test
@@ -178,10 +180,10 @@ class VisionPluginTest {
 		}
 	}
 
-	// -- scan_face – no faces detected -------------------------------------
+	// -- scan_face - no faces detected -------------------------------------
 
 	@Nested
-	@DisplayName("scan_face() – no faces detected")
+	@DisplayName("scan_face() - no faces detected")
 	class ScanFaceEmpty {
 
 		@Test
@@ -213,10 +215,10 @@ class VisionPluginTest {
 		}
 	}
 
-	// -- scan_face – detector throws ----------------------------------------
+	// -- scan_face - detector throws ----------------------------------------
 
 	@Nested
-	@DisplayName("scan_face() – detector failure")
+	@DisplayName("scan_face() - detector failure")
 	class ScanFaceDetectorFailure {
 
 		@Test
@@ -250,10 +252,10 @@ class VisionPluginTest {
 		}
 	}
 
-	// -- scan_face – invalid image data ------------------------------------
+	// -- scan_face - invalid image data ------------------------------------
 
 	@Nested
-	@DisplayName("scan_face() – invalid image data (no detector call expected)")
+	@DisplayName("scan_face() - invalid image data (no detector call expected)")
 	class ScanFaceInvalidImage {
 
 		@Test
@@ -300,10 +302,10 @@ class VisionPluginTest {
 		}
 	}
 
-	// -- scan_face – uninitialised detector --------------------------------
+	// -- scan_face - uninitialised detector --------------------------------
 
 	@Nested
-	@DisplayName("scan_face() – detector not initialised")
+	@DisplayName("scan_face() - detector not initialised")
 	class ScanFaceNoDetector {
 
 		@Test
@@ -373,15 +375,19 @@ class VisionPluginTest {
 		}
 
 		@Test
-		@DisplayName("ready signal payload always has 'image_width', 'image_height', 'faces'")
+		@DisplayName("ready signal payload always has 'image', 'faces'")
 		void readyPayloadKeys() {
 			List<FaceMesh> faces = List.of(FaceMeshFixtures.minimalFace());
 			when(mockDetector.process(any())).thenReturn(FakeTask.success(faces));
 			plugin.scan_face(ImageInfoFixtures.validImageDict());
 			Dictionary payload = plugin.lastSignalArg();
-			assertTrue(payload.containsKey("image_width"), "must have 'image_width'");
-			assertTrue(payload.containsKey("image_height"), "must have 'image_height'");
+			assertTrue(payload.containsKey("image"), "must have 'image'");
 			assertTrue(payload.containsKey("faces"), "must have 'faces'");
+			// Dimensions and buffer are now inside the 'image' sub-dictionary.
+			Dictionary imageDict = (Dictionary) payload.get("image");
+			assertTrue(imageDict.containsKey("width"),  "image must have 'width'");
+			assertTrue(imageDict.containsKey("height"), "image must have 'height'");
+			assertTrue(imageDict.containsKey("buffer"), "image must have 'buffer'");
 		}
 
 		@Test

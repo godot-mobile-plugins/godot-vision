@@ -52,7 +52,7 @@ final class FaceLandmarkerServiceTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - init() – model-not-found path
+	// MARK: - init() - model-not-found path
 	// -----------------------------------------------------------------------
 
 	/// In the test bundle the .task asset is absent, so init() must throw
@@ -61,7 +61,7 @@ final class FaceLandmarkerServiceTests: XCTestCase {
 		// Verify the asset really is absent so this test stays meaningful.
 		let url = Bundle.main.url(forResource: "face_landmarker", withExtension: "task")
 		guard url == nil else {
-			// Model is present – skip this particular assertion (integration env).
+			// Model is present - skip this particular assertion (integration env).
 			return
 		}
 
@@ -82,7 +82,7 @@ final class FaceLandmarkerServiceTests: XCTestCase {
 			_ = try FaceLandmarkerService()
 			XCTFail("Expected init to throw")
 		} catch let err as FaceLandmarkerService.ServiceError {
-			// Pass – correct error type
+			// Pass - correct error type
 			_ = err
 		} catch {
 			XCTFail("Expected ServiceError, got \(type(of: error)): \(error)")
@@ -90,7 +90,7 @@ final class FaceLandmarkerServiceTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - init() – invalid model path (initFailed branch)
+	// MARK: - init() - invalid model path (initFailed branch)
 	// -----------------------------------------------------------------------
 
 	/// Place a zero-byte file named face_landmarker.task in the test bundle's
@@ -99,7 +99,7 @@ final class FaceLandmarkerServiceTests: XCTestCase {
 	func testInitThrowsInitFailedForInvalidModelFile() throws {
 		guard let url = Bundle(for: type(of: self))
 			.url(forResource: "face_landmarker_stub", withExtension: "task") else {
-			throw XCTSkip("face_landmarker_stub.task not in test bundle – skipping initFailed path")
+			throw XCTSkip("face_landmarker_stub.task not in test bundle - skipping initFailed path")
 		}
 
 		// Temporarily shadow the real search path by creating a sub-bundle

@@ -5,7 +5,7 @@
 package android.util;
 
 /**
- * Log stub – prints to stdout so test output remains readable while keeping
+ * Log stub - prints to stdout so test output remains readable while keeping
  * the method signatures identical to the real android.util.Log class.
  */
 public final class Log {
@@ -24,7 +24,7 @@ public final class Log {
 	}
 
 	public static int e(String tag, String msg, Throwable tr) {
-		System.err.println("[E/" + tag + "] " + msg + " – " + tr);
+		System.err.println("[E/" + tag + "] " + msg + " - " + tr);
 		return 0;
 	}
 

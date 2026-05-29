@@ -33,12 +33,28 @@ final class VisionSwiftBridgeTests: XCTestCase {
 	private let kTimeout: TimeInterval = 2.0
 
 	// -----------------------------------------------------------------------
-	// MARK: - Helper: make a minimal NSData buffer
+	// MARK: - Helpers
 	// -----------------------------------------------------------------------
 
+	/// Builds a raw RGBA8 NSData buffer of the given dimensions.
 	private func makeBuffer(width: Int, height: Int) -> NSData {
 		let data = TestFixtures.rgbaBuffer(width: width, height: height)
 		return data as NSData
+	}
+
+	/// Builds the imageInfo NSDictionary that vision_plugin.mm constructs from
+	/// the Godot image dict before calling scanFace(buffer:imageInfo:width:height:).
+	/// An empty NSData buffer is used since the bridge only stores and re-emits
+	/// the imageInfo dict; the actual pixel data is supplied via the `buffer`
+	/// parameter of scanFace().
+	private func makeImageInfo(width: Int, height: Int) -> NSDictionary {
+		[
+			"buffer":      NSData(),
+			"width":       NSNumber(value: width),
+			"height":      NSNumber(value: height),
+			"format":      NSNumber(value: 4),   // Image.FORMAT_RGBA8
+			"has_mipmaps": NSNumber(value: 0)
+		]
 	}
 
 	// -----------------------------------------------------------------------
@@ -56,7 +72,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 		let exp = expectation(description: "faceMeshFailed for uninitialised bridge")
 		delegate.failureExpectation = exp
 
-		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4), width: 4, height: 4)
+		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4),
+					imageInfo: makeImageInfo(width: 4, height: 4),
+					width: 4, height: 4)
 
 		wait(for: [exp], timeout: kTimeout)
 		delegate.assertSingleFailureCode(.internalError)
@@ -69,7 +87,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "failure description")
 		delegate.failureExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4), width: 4, height: 4)
+		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4),
+					imageInfo: makeImageInfo(width: 4, height: 4),
+					width: 4, height: 4)
 		wait(for: [exp], timeout: kTimeout)
 
 		let desc = delegate.lastError?["description"] as? String ?? ""
@@ -91,7 +111,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "failure after bad init")
 		delegate.failureExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4), width: 4, height: 4)
+		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4),
+					imageInfo: makeImageInfo(width: 4, height: 4),
+					width: 4, height: 4)
 		wait(for: [exp], timeout: kTimeout)
 
 		delegate.assertSingleFailureCode(.internalError)
@@ -116,7 +138,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 			exp.fulfill()
 		}
 
-		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4), width: 4, height: 4)
+		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4),
+					imageInfo: makeImageInfo(width: 4, height: 4),
+					width: 4, height: 4)
 		wait(for: [exp], timeout: kTimeout)
 	}
 
@@ -156,7 +180,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "failure after shutdown")
 		delegate.failureExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4), width: 4, height: 4)
+		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4),
+					imageInfo: makeImageInfo(width: 4, height: 4),
+					width: 4, height: 4)
 		wait(for: [exp], timeout: kTimeout)
 
 		delegate.assertSingleFailureCode(.internalError)
@@ -174,7 +200,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 			XCTAssertTrue(Thread.isMainThread, "Callback must be on main thread")
 			exp.fulfill()
 		}
-		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4), width: 4, height: 4)
+		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4),
+					imageInfo: makeImageInfo(width: 4, height: 4),
+					width: 4, height: 4)
 		wait(for: [exp], timeout: kTimeout)
 	}
 
@@ -183,8 +211,10 @@ final class VisionSwiftBridgeTests: XCTestCase {
 	func testScanFaceWithNilDelegateDoesNotCrash() {
 		let bridge = VisionSwiftBridge()
 		bridge.delegate = nil
-		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4), width: 4, height: 4)
-		// No expectation – we only verify there is no crash.
+		bridge.scanFace(buffer: makeBuffer(width: 4, height: 4),
+					imageInfo: makeImageInfo(width: 4, height: 4),
+					width: 4, height: 4)
+		// No expectation - we only verify there is no crash.
 		// Give the main-thread dispatch time to fire.
 		let spin = expectation(description: "spin")
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { spin.fulfill() }
@@ -223,7 +253,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "no-face error")
 		delegate.failureExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8), width: 8, height: 8)
+		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8),
+					imageInfo: makeImageInfo(width: 8, height: 8),
+					width: 8, height: 8)
 		wait(for: [exp], timeout: kTimeout)
 
 		delegate.assertSingleFailureCode(.noFaceDetected)
@@ -247,7 +279,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "success with one face")
 		delegate.successExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8), width: 8, height: 8)
+		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8),
+					imageInfo: makeImageInfo(width: 8, height: 8),
+					width: 8, height: 8)
 		wait(for: [exp], timeout: kTimeout)
 
 		XCTAssertEqual(delegate.successCallCount, 1)
@@ -269,10 +303,36 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "success")
 		delegate.successExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8), width: 8, height: 8)
+		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8),
+					imageInfo: makeImageInfo(width: 8, height: 8),
+					width: 8, height: 8)
 		wait(for: [exp], timeout: kTimeout)
 
 		XCTAssertNotNil(delegate.lastResult?["faces"])
+	}
+
+	func testScanFaceSuccessResultContainsImageKey() throws {
+		let bridge = VisionSwiftBridge()
+		guard mockInjectionAvailable(bridge) else {
+			throw XCTSkip("FaceDetecting protocol injection not yet applied")
+		}
+
+		let mock = MockFaceLandmarker()
+		mock.stubbedResult = .success([TestFixtures.makeDetectedFace()])
+		bridge.landmarkerService = mock
+
+		let delegate = MockFaceDelegate()
+		bridge.delegate = delegate
+
+		let exp = expectation(description: "success")
+		delegate.successExpectation = exp
+		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8),
+					imageInfo: makeImageInfo(width: 8, height: 8),
+					width: 8, height: 8)
+		wait(for: [exp], timeout: kTimeout)
+
+		XCTAssertNotNil(delegate.lastResult?["image"],
+					"result must contain an 'image' key holding the ImageInfo sub-dictionary")
 	}
 
 	func testScanFaceSuccessResultContainsCorrectImageDimensions() throws {
@@ -291,11 +351,17 @@ final class VisionSwiftBridgeTests: XCTestCase {
 		let w = 16, h = 12
 		let exp = expectation(description: "success with dimensions")
 		delegate.successExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: w, height: h), width: w, height: h)
+		bridge.scanFace(buffer: makeBuffer(width: w, height: h),
+					imageInfo: makeImageInfo(width: w, height: h),
+					width: w, height: h)
 		wait(for: [exp], timeout: kTimeout)
 
-		XCTAssertEqual((delegate.lastResult?["image_width"]  as? NSNumber)?.intValue, w)
-		XCTAssertEqual((delegate.lastResult?["image_height"] as? NSNumber)?.intValue, h)
+		// Dimensions are now stored inside the "image" sub-dictionary, not as
+		// flat top-level keys.  Use optional chaining so a missing key produces
+		// a clear nil-mismatch failure rather than a force-unwrap crash.
+		let imageInfo = delegate.lastResult?["image"] as? NSDictionary
+		XCTAssertEqual((imageInfo?["width"]  as? NSNumber)?.intValue, w)
+		XCTAssertEqual((imageInfo?["height"] as? NSNumber)?.intValue, h)
 	}
 
 	// --- B3. Success callback on main thread --------------------------------
@@ -318,7 +384,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 			XCTAssertTrue(Thread.isMainThread)
 			exp.fulfill()
 		}
-		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8), width: 8, height: 8)
+		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8),
+					imageInfo: makeImageInfo(width: 8, height: 8),
+					width: 8, height: 8)
 		wait(for: [exp], timeout: kTimeout)
 	}
 
@@ -340,7 +408,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "scanner failure forwarded")
 		delegate.failureExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8), width: 8, height: 8)
+		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8),
+					imageInfo: makeImageInfo(width: 8, height: 8),
+					width: 8, height: 8)
 		wait(for: [exp], timeout: kTimeout)
 
 		delegate.assertSingleFailureCode(.scannerFailure)
@@ -361,12 +431,18 @@ final class VisionSwiftBridgeTests: XCTestCase {
 		let delegate = MockFaceDelegate()
 		bridge.delegate = delegate
 
-		// Buffer sized for 4×4 but passed as 100×100 -> makeUIImage returns nil.
+		// Buffer is sized for 4×4 but the declared dimensions claim 100×100.
+		// ImageInfo.makeUIImage() will fail to construct a valid UIImage, so
+		// the bridge must emit .invalidImage before touching the mock.
+		// The imageInfo records the declared (100×100) dimensions since that
+		// is what vision_plugin.mm extracts from the Godot image dict.
 		let undersizedBuffer = makeBuffer(width: 4, height: 4)
 
 		let exp = expectation(description: "invalid image from dimension mismatch")
 		delegate.failureExpectation = exp
-		bridge.scanFace(buffer: undersizedBuffer, width: 100, height: 100)
+		bridge.scanFace(buffer: undersizedBuffer,
+					imageInfo: makeImageInfo(width: 100, height: 100),
+					width: 100, height: 100)
 		wait(for: [exp], timeout: kTimeout)
 
 		delegate.assertSingleFailureCode(.invalidImage)
@@ -389,7 +465,9 @@ final class VisionSwiftBridgeTests: XCTestCase {
 
 		let exp = expectation(description: "success")
 		delegate.successExpectation = exp
-		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8), width: 8, height: 8)
+		bridge.scanFace(buffer: makeBuffer(width: 8, height: 8),
+					imageInfo: makeImageInfo(width: 8, height: 8),
+					width: 8, height: 8)
 		wait(for: [exp], timeout: kTimeout)
 
 		XCTAssertEqual(mock.detectCallCount, 1)

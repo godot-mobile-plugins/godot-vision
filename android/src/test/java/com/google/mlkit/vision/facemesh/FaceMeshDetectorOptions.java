@@ -18,7 +18,7 @@ public final class FaceMeshDetectorOptions {
 		public Builder() {
 		}
 
-		/** No-op – options are irrelevant in the test environment. */
+		/** No-op - options are irrelevant in the test environment. */
 		public Builder setPerformanceMode(int mode) {
 			return this;
 		}

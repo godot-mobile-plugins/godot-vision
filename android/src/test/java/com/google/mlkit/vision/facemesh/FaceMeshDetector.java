@@ -19,12 +19,12 @@ import java.util.List;
  * is declared as a {@code class} instead:
  *
  * <ol>
- *   <li><b>IncompatibleClassChangeError – "Found class, but interface was
+ *   <li><b>IncompatibleClassChangeError - "Found class, but interface was
  *       expected"</b>: production bytecode calls {@code process()} via an
  *       <em>invokeinterface</em> instruction.  The JVM throws at runtime when
  *       the receiver is a class-based Mockito subclass proxy, because the
  *       instruction requires an interface type.</li>
- *   <li><b>IncompatibleClassChangeError – "does not implement
+ *   <li><b>IncompatibleClassChangeError - "does not implement
  *       java.io.Closeable"</b>: {@code VisionPlugin.onMainDestroy()} casts the
  *       detector to {@code Closeable} in order to call {@code .close()}.  The
  *       cast throws if the stub does not declare the interface.</li>

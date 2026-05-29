@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit tests for {@link ScanError}.
  *
  * Covers:
- *  – {@code buildRawData()} includes both "code" and "description" keys
- *  – every {@link ScanError.Code} variant survives the round-trip
- *  – null description does not cause NPE
- *  – dictionary keys match the constants expected by GDScript consumers
+ *  - {@code buildRawData()} includes both "code" and "description" keys
+ *  - every {@link ScanError.Code} variant survives the round-trip
+ *  - null description does not cause NPE
+ *  - dictionary keys match the constants expected by GDScript consumers
  */
 @DisplayName("ScanError")
 class ScanErrorTest {

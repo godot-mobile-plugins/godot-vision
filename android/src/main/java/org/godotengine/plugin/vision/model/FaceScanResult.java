@@ -15,33 +15,35 @@ public class FaceScanResult {
 	private static final String CLASS_NAME = FaceScanResult.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + CLASS_NAME;
 
-	private static final String IMAGE_WIDTH_PROPERTY = "image_width";
-	private static final String IMAGE_HEIGHT_PROPERTY = "image_height";
+	private static final String IMAGE_PROPERTY = "image";
 	private static final String FACES_PROPERTY = "faces";
 
 	private List<FaceMesh> faceMeshes;
-	private int imageWidth;
-	private int imageHeight;
+	private ImageInfo imageInfo;
 
-	public FaceScanResult(List<FaceMesh> faceMeshes, int imageWidth, int imageHeight) {
+	public FaceScanResult(List<FaceMesh> faceMeshes, ImageInfo imageInfo) {
 		this.faceMeshes = faceMeshes;
-		this.imageWidth = imageWidth;
-		this.imageHeight = imageHeight;
+		this.imageInfo = imageInfo;
 	}
 
 	// -------------------------------------------------------------------------
 	// buildRawData
 	//
 	// Converts a list of FaceMesh objects into a Godot Dictionary with the
-	// following structure (all coordinates are NORMALISED to [0, 1]):
+	// following structure (all landmark coordinates are NORMALISED to [0, 1]):
 	//
 	//   {
-	//     "image_width":  long,
-	//     "image_height": long,
-	//     "faces": [                  ← Object[] – one entry per detected face
+	//     "image": {                  ← full ImageInfo dictionary for the processed image
+	//       "buffer":     byte[],     ← raw RGBA8 pixel data
+	//       "width":      long,
+	//       "height":     long,
+	//       "format":     long,       ← Godot Image.FORMAT_RGBA8 == 4
+	//       "has_mipmaps": bool
+	//     },
+	//     "faces": [                  ← Object[] - one entry per detected face
 	//       {
 	//         "points": [             ← Object[] of 468 entries, each Object[3]
-	//           [x, y, z],            ← double; x,y normalised 0–1; z is relative depth
+	//           [x, y, z],            ← double; x,y normalised 0-1; z is relative depth
 	//           …
 	//         ],
 	//         "triangles": [          ← Object[] of triangle entries, each Object[3]
@@ -74,14 +76,13 @@ public class FaceScanResult {
 	public Dictionary buildRawData() {
 		Dictionary dict = new Dictionary();
 
-		dict.put(IMAGE_WIDTH_PROPERTY, (long) imageWidth);
-		dict.put(IMAGE_HEIGHT_PROPERTY, (long) imageHeight);
+		dict.put(IMAGE_PROPERTY, imageInfo.getRawData());
 
 		Object[] facesArray = new Object[faceMeshes.size()];
 
 		for (int f = 0; f < faceMeshes.size(); f++) {
 			FaceMeshInfo faceMeshInfo = new FaceMeshInfo(faceMeshes.get(f));
-			facesArray[f] = faceMeshInfo.buildRawData(imageWidth, imageHeight);
+			facesArray[f] = faceMeshInfo.buildRawData(imageInfo.getWidth(), imageInfo.getHeight());
 		}
 
 		dict.put(FACES_PROPERTY, facesArray);

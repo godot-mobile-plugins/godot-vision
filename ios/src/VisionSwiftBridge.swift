@@ -18,7 +18,7 @@
 //
 
 import Foundation
-import UIKit        // UIImage – needed for image construction
+import UIKit        // UIImage - needed for image construction
 
 // ---------------------------------------------------------------------------
 // VisionSwiftBridgeDelegate
@@ -29,7 +29,7 @@ import UIKit        // UIImage – needed for image construction
 // ---------------------------------------------------------------------------
 @objc public protocol VisionSwiftBridgeDelegate: AnyObject {
 	/// Called when face-mesh detection succeeds.  The dictionary layout
-	/// matches FaceScanResult.buildNSDictionary() – see that class for the
+	/// matches FaceScanResult.buildNSDictionary() - see that class for the
 	/// full schema.
 	func faceMeshReady(result: NSDictionary)
 
@@ -44,7 +44,7 @@ import UIKit        // UIImage – needed for image construction
 @objc(VisionSwiftBridge)
 public class VisionSwiftBridge: NSObject {
 
-	// Strong reference – the handler is a local in the C++ constructor so nothing
+	// Strong reference - the handler is a local in the C++ constructor so nothing
 	// else owns it.  weak would zero this property the moment the constructor
 	// returns, silently dropping every callback.  There is no retain cycle:
 	// FaceMeshCallbackHandler holds no reference back to VisionSwiftBridge.
@@ -118,17 +118,22 @@ public class VisionSwiftBridge: NSObject {
 	}
 
 	// -----------------------------------------------------------------------
-	// scanFace(buffer:width:height:)
+	// scanFace(buffer:imageInfo:width:height:)
 	//
 	// Entry point from VisionPlugin::scan_face().
 	// Dispatches detection to the background queue; delegates back on main.
 	//
 	// Parameters
-	//   buffer   Raw RGBA8 pixel data (Godot Image.FORMAT_RGBA8 layout).
-	//   width    Image width in pixels.
-	//   height   Image height in pixels.
+	//   buffer    Raw RGBA8 pixel data (Godot Image.FORMAT_RGBA8 layout).
+	//   imageInfo Full ImageInfo NSDictionary built by the .mm layer from the
+	//             Godot image dict (keys: buffer, width, height, format,
+	//             has_mipmaps).  Stored verbatim and returned in the result so
+	//             GDScript can reconstruct an ImageInfo object via
+	//             result.get_image().
+	//   width     Image width in pixels.
+	//   height    Image height in pixels.
 	// -----------------------------------------------------------------------
-	@objc public func scanFace(buffer: NSData, width: Int, height: Int) {
+	@objc public func scanFace(buffer: NSData, imageInfo: NSDictionary, width: Int, height: Int) {
 		guard let service = landmarkerService else {
 			// Surface the actual error that caused initialisation to fail rather
 			// than the generic "not initialised" message that swallows the cause.
@@ -148,15 +153,16 @@ public class VisionSwiftBridge: NSObject {
 
 		processingQueue.async { [weak self] in
 			guard let self = self else { return }
-			self.process(imageData: data, width: width, height: height,
+			self.process(imageData: data, imageInfo: imageInfo, width: width, height: height,
 						service: service)
 		}
 	}
 
 	// -----------------------------------------------------------------------
-	// Private – image processing
+	// Private - image processing
 	// -----------------------------------------------------------------------
 	private func process(imageData: Data,
+						imageInfo: NSDictionary,
 						width: Int,
 						height: Int,
 						service: any FaceDetecting) {
@@ -178,9 +184,7 @@ public class VisionSwiftBridge: NSObject {
 			deliverFailure(error.buildNSDictionary())
 
 		case .success(let faces):
-			let result = FaceScanResult(faces: faces,
-										imageWidth: width,
-										imageHeight: height)
+			let result = FaceScanResult(faces: faces, imageInfo: imageInfo)
 			deliverSuccess(result.buildNSDictionary())
 
 		case .failure(let scanError):
@@ -189,7 +193,7 @@ public class VisionSwiftBridge: NSObject {
 	}
 
 	// -----------------------------------------------------------------------
-	// Private – threaded delivery helpers
+	// Private - threaded delivery helpers
 	// -----------------------------------------------------------------------
 	private func deliverSuccess(_ result: NSDictionary) {
 		DispatchQueue.main.async { [weak self] in

@@ -8,11 +8,11 @@
 // Error codes are kept in the same order as the Android enum so that
 // GDScript code can use the same numeric constants on both platforms:
 //
-//   0 – NONE
-//   1 – INVALID_IMAGE
-//   2 – NO_FACE_DETECTED   (maps to Android's NO_CODE_DETECTED)
-//   3 – SCANNER_FAILURE
-//   4 – INTERNAL_ERROR
+//   0 - NONE
+//   1 - INVALID_IMAGE
+//   2 - NO_FACE_DETECTED   (maps to Android's NO_CODE_DETECTED)
+//   3 - SCANNER_FAILURE
+//   4 - INTERNAL_ERROR
 //
 
 import Foundation

@@ -125,7 +125,7 @@ final class ImageInfoTests: XCTestCase {
 	// -----------------------------------------------------------------------
 
 	func testFormatRGBA8ConstantEqualsGodotValue() {
-		// Godot Image.FORMAT_RGBA8 == 4 – must stay in sync with the Android plugin.
+		// Godot Image.FORMAT_RGBA8 == 4 - must stay in sync with the Android plugin.
 		XCTAssertEqual(ImageInfo.formatRGBA8, 4)
 	}
 
@@ -133,7 +133,7 @@ final class ImageInfoTests: XCTestCase {
 	// MARK: - Extreme dimensions (stress)
 	// -----------------------------------------------------------------------
 
-	/// 1920 × 1080 – representative HD camera frame.
+	/// 1920 × 1080 - representative HD camera frame.
 	func testLargeHDFrameSucceeds() {
 		let w = 1920, h = 1080
 		let buffer = TestFixtures.rgbaBuffer(width: w, height: h)
@@ -141,7 +141,7 @@ final class ImageInfoTests: XCTestCase {
 		XCTAssertNotNil(image, "HD-sized buffer should produce a valid UIImage")
 	}
 
-	/// Very tall, very narrow (1 × 512) – non-square boundary condition.
+	/// Very tall, very narrow (1 × 512) - non-square boundary condition.
 	func testTallNarrowImageSucceeds() {
 		let buffer = TestFixtures.rgbaBuffer(width: 1, height: 512)
 		let image = ImageInfo.makeUIImage(from: buffer, width: 1, height: 512)

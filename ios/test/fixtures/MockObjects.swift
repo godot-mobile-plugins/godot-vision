@@ -3,10 +3,10 @@
 //
 // Test doubles used by VisionSwiftBridgeTests (and optionally other suites).
 //
-// MockFaceDelegate  – records every callback delivered by the bridge so tests
+// MockFaceDelegate  - records every callback delivered by the bridge so tests
 //                     can assert on them with XCTestExpectation.
 //
-// MockFaceLandmarker – implements FaceDetecting and lets each test configure
+// MockFaceLandmarker - implements FaceDetecting and lets each test configure
 //                      the exact result that detect(image:) should return.
 //                      Optionally records which UIImages were passed in.
 //

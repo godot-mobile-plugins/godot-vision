@@ -7,10 +7,10 @@
 //
 // Represents the image dictionary sent from GDScript:
 //   {
-//     "buffer":     PackedByteArray  – raw RGBA8 pixels
+//     "buffer":     PackedByteArray  - raw RGBA8 pixels
 //     "width":      int
 //     "height":     int
-//     "format":     int              – Godot Image.FORMAT_RGBA8 == 4
+//     "format":     int              - Godot Image.FORMAT_RGBA8 == 4
 //     "has_mipmaps": bool
 //   }
 //

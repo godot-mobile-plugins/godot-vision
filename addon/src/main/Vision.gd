@@ -64,9 +64,9 @@ func _connect_signals() -> void:
 # re-applied if the plugin singleton is reconnected after an app-resume.
 #
 # Platform notes:
-#   iOS   – fully supported; MediaPipe rebuilds the landmarker with the new
+#   iOS   - fully supported; MediaPipe rebuilds the landmarker with the new
 #            limit immediately.
-#   Android – ML Kit's FaceMeshDetectorOptions.Builder does not expose a
+#   Android - ML Kit's FaceMeshDetectorOptions.Builder does not expose a
 #              max-faces setting, so this call is accepted but has no effect;
 #              the SDK default of 2 faces is always used on Android.
 #
@@ -115,8 +115,10 @@ func _on_face_mesh_failed(a_dict: Dictionary) -> void:
 # Its structure is:
 #
 #   FaceScanResult
-#     get_image_width()  -> int
-#     get_image_height() -> int
+#     get_image()        -> ImageInfo   # full info for the processed image
+#       get_width()      -> int
+#       get_height()     -> int
+#       get_buffer()     -> PackedByteArray
 #     get_faces()        -> Array[FaceMeshInfo]
 #       FaceMeshInfo
 #         get_points()    -> Array[Vector3]   # 468 landmarks, x/y ∈ [0,1]
@@ -133,10 +135,10 @@ func _on_face_mesh_failed(a_dict: Dictionary) -> void:
 # as a separate layer.
 #
 # Parameters:
-#   a_result – FaceScanResult from the face_mesh_ready signal
-#   a_width  – pixel width of the output image (should match the source image)
-#   a_height – pixel height of the output image
-#   a_color  – Color for mesh edges (alpha is respected)
+#   a_result - FaceScanResult from the face_mesh_ready signal
+#   a_width  - pixel width of the output image (should match the source image)
+#   a_height - pixel height of the output image
+#   a_color  - Color for mesh edges (alpha is respected)
 # ---------------------------------------------------------------------------
 static func generate_face_mesh_image(a_result: FaceScanResult, a_width: int, a_height: int, a_color: Color) -> Image:
 	var image := Image.create(a_width, a_height, false, Image.FORMAT_RGBA8)
@@ -160,9 +162,9 @@ static func generate_face_mesh_image(a_result: FaceScanResult, a_width: int, a_h
 # modified.
 #
 # Parameters:
-#   a_original – the source Image (any format; converted internally)
-#   a_result   – FaceScanResult from the face_mesh_ready signal
-#   a_color    – Color for mesh edges
+#   a_original - the source Image (any format; converted internally)
+#   a_result   - FaceScanResult from the face_mesh_ready signal
+#   a_color    - Color for mesh edges
 # ---------------------------------------------------------------------------
 static func draw_face_mesh_on_image(a_original: Image, a_result: FaceScanResult, a_color: Color) -> Image:
 	var result := Image.new()

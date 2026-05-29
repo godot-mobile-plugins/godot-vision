@@ -28,6 +28,8 @@ A Godot plugin that provides a unified GDScript interface for **ML Kit face mesh
 <br>
 
 ## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-vision/main/addon/src/main/icon.png" width="20"> Table of Contents
+
+- [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Signals](#signals)
@@ -42,7 +44,17 @@ A Godot plugin that provides a unified GDScript interface for **ML Kit face mesh
 - [Credits](#credits)
 - [Contributing](#contributing)
 
-<br>
+<a name="demo"></a>
+
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/addon/src/main/icon.png" width="20"> Demo
+
+Try the **demo app** located in the `demo` directory.
+
+<p align="center">
+	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/docs/assets/demo_screenshot_ios_111.png" width="234">
+	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/docs/assets/demo_screenshot_ios_112.png" width="234">
+	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/docs/assets/demo_screenshot_ios_113.png" width="234">
+</p>
 
 <a name="installation"></a>
 
@@ -135,7 +147,7 @@ func _on_face_mesh_ready(result: FaceScanResult) -> void:
 ```gdscript
 func _on_face_mesh_ready(result: FaceScanResult) -> void:
 	var mesh_layer: Image = Vision.generate_face_mesh_image(
-		result, original_image.get_width(), original_image.get_height(), Color.LIME)
+		result, result.get_image().get_width(), result.get_image().get_height(), Color.LIME)
 	$MeshOverlay.texture = ImageTexture.create_from_image(mesh_layer)
 ```
 
@@ -156,7 +168,7 @@ Register listeners to the following signals of the `Vision` node:
 
 | Signal | Description |
 | :--- | :--- |
-| `face_mesh_ready(result: FaceScanResult)` | Emitted when face mesh detection succeeds. `result` contains the image dimensions and an array of `FaceMeshInfo` objects, one per detected face. |
+| `face_mesh_ready(result: FaceScanResult)` | Emitted when face mesh detection succeeds. `result` contains the full `ImageInfo` for the processed image and an array of `FaceMeshInfo` objects, one per detected face. |
 | `face_mesh_failed(error: ScanError)` | Emitted when detection fails. `error` contains a `ScanError.Code` enum value and a human-readable description. |
 
 <a name="methods"></a>
@@ -197,8 +209,7 @@ Encapsulates the full result of a `scan_face()` call. Received via the `face_mes
 
 | Method | Return type | Description |
 | :--- | :--- | :--- |
-| `get_image_width()` | `int` | Width (px) of the image that was scanned. |
-| `get_image_height()` | `int` | Height (px) of the image that was scanned. |
+| `get_image()` | `ImageInfo` | Returns the full `ImageInfo` for the image that was scanned. Use `get_image().get_width()`, `get_image().get_height()`, `get_image().get_buffer()`, etc. to access individual properties. Returns `null` if the result is malformed. |
 | `get_face_count()` | `int` | Number of faces detected in the image. |
 | `get_face(a_index: int)` | `FaceMeshInfo` | Returns the `FaceMeshInfo` at the given index, or `null` if out of range. |
 | `get_faces()` | `Array` | Returns all detected faces as an `Array` of `FaceMeshInfo` objects. |

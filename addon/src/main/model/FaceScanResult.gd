@@ -4,8 +4,7 @@
 
 class_name FaceScanResult extends RefCounted
 
-const IMAGE_WIDTH_PROPERTY := &"image_width"
-const IMAGE_HEIGHT_PROPERTY := &"image_height"
+const IMAGE_PROPERTY := &"image"
 const FACES_PROPERTY := &"faces"
 
 var _data: Dictionary
@@ -15,12 +14,11 @@ func _init(a_data: Dictionary):
 	_data = a_data
 
 
-func get_image_width() -> int:
-	return _data[IMAGE_WIDTH_PROPERTY] if _data.has(IMAGE_WIDTH_PROPERTY) else 0
-
-
-func get_image_height() -> int:
-	return _data[IMAGE_HEIGHT_PROPERTY] if _data.has(IMAGE_HEIGHT_PROPERTY) else 0
+## Returns the ImageInfo object for the image that was processed.
+## All image properties (width, height, buffer, format, has_mipmaps) are
+## available on the returned object via its accessor methods.
+func get_image() -> ImageInfo:
+	return ImageInfo.new(_data[IMAGE_PROPERTY]) if _data.has(IMAGE_PROPERTY) else null
 
 
 func get_face_count() -> int:
@@ -48,7 +46,7 @@ func get_faces() -> Array:
 
 
 func is_valid() -> bool:
-	return _data.has(IMAGE_WIDTH_PROPERTY) and _data.has(IMAGE_HEIGHT_PROPERTY) and _data.has(FACES_PROPERTY)
+	return _data.has(IMAGE_PROPERTY) and _data.has(FACES_PROPERTY)
 
 
 func get_raw_data() -> Dictionary:

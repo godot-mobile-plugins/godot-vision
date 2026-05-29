@@ -68,12 +68,12 @@ public final class ImageInfoFixtures {
 		return info.getRawData();
 	}
 
-	/** A completely empty dictionary – simulates a caller bug. */
+	/** A completely empty dictionary - simulates a caller bug. */
 	public static Dictionary emptyDict() {
 		return new Dictionary();
 	}
 
-	/** A dictionary with negative width – triggers validation path. */
+	/** A dictionary with negative width - triggers validation path. */
 	public static Dictionary negativeDimensionDict() {
 		ImageInfo info = new ImageInfo();
 		info.setBuffer(new byte[4]);

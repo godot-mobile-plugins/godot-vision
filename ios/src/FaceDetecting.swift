@@ -28,6 +28,6 @@ protocol FaceDetecting {
 }
 
 // ---------------------------------------------------------------------------
-// Retroactive conformance – no behaviour change, just adoption.
+// Retroactive conformance - no behaviour change, just adoption.
 // ---------------------------------------------------------------------------
 extension FaceLandmarkerService: FaceDetecting {}
