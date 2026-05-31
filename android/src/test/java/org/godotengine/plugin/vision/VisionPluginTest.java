@@ -211,7 +211,7 @@ class VisionPluginTest {
 					.thenReturn(FakeTask.success(Collections.emptyList()));
 			plugin.scan_face(ImageInfoFixtures.validImageDict());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.NO_CODE_DETECTED, error.get("code"));
+			assertEquals(ScanError.Code.NO_CODE_DETECTED.ordinal(), error.get("code"));
 		}
 	}
 
@@ -237,7 +237,7 @@ class VisionPluginTest {
 					.thenReturn(FakeTask.failure(new RuntimeException("ML failure")));
 			plugin.scan_face(ImageInfoFixtures.validImageDict());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.SCANNER_FAILURE, error.get("code"));
+			assertEquals(ScanError.Code.SCANNER_FAILURE.ordinal(), error.get("code"));
 		}
 
 		@Test
@@ -264,7 +264,7 @@ class VisionPluginTest {
 			plugin.scan_face(ImageInfoFixtures.nullBufferDict());
 			assertEquals(VisionPlugin.FACE_MESH_FAILED_SIGNAL, plugin.lastSignalName());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.INVALID_IMAGE, error.get("code"));
+			assertEquals(ScanError.Code.INVALID_IMAGE.ordinal(), error.get("code"));
 		}
 
 		@Test
@@ -273,7 +273,7 @@ class VisionPluginTest {
 			plugin.scan_face(ImageInfoFixtures.zeroDimensionDict());
 			assertEquals(VisionPlugin.FACE_MESH_FAILED_SIGNAL, plugin.lastSignalName());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.INVALID_IMAGE, error.get("code"));
+			assertEquals(ScanError.Code.INVALID_IMAGE.ordinal(), error.get("code"));
 		}
 
 		@Test
@@ -282,7 +282,7 @@ class VisionPluginTest {
 			plugin.scan_face(ImageInfoFixtures.negativeDimensionDict());
 			assertEquals(VisionPlugin.FACE_MESH_FAILED_SIGNAL, plugin.lastSignalName());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.INVALID_IMAGE, error.get("code"));
+			assertEquals(ScanError.Code.INVALID_IMAGE.ordinal(), error.get("code"));
 		}
 
 		@Test
@@ -298,7 +298,7 @@ class VisionPluginTest {
 			plugin.scan_face(ImageInfoFixtures.emptyDict());
 			assertEquals(VisionPlugin.FACE_MESH_FAILED_SIGNAL, plugin.lastSignalName());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.INVALID_IMAGE, error.get("code"));
+			assertEquals(ScanError.Code.INVALID_IMAGE.ordinal(), error.get("code"));
 		}
 	}
 
@@ -315,7 +315,7 @@ class VisionPluginTest {
 			plugin.scan_face(ImageInfoFixtures.validImageDict());
 			assertEquals(VisionPlugin.FACE_MESH_FAILED_SIGNAL, plugin.lastSignalName());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.INTERNAL_ERROR, error.get("code"));
+			assertEquals(ScanError.Code.INTERNAL_ERROR.ordinal(), error.get("code"));
 		}
 	}
 
@@ -355,7 +355,7 @@ class VisionPluginTest {
 			plugin.scan_face(ImageInfoFixtures.validImageDict());
 			assertEquals(VisionPlugin.FACE_MESH_FAILED_SIGNAL, plugin.lastSignalName());
 			Dictionary error = plugin.lastSignalArg();
-			assertEquals(ScanError.Code.INTERNAL_ERROR, error.get("code"));
+			assertEquals(ScanError.Code.INTERNAL_ERROR.ordinal(), error.get("code"));
 		}
 	}
 

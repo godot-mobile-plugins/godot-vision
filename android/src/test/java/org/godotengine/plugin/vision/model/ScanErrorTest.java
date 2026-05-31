@@ -59,7 +59,7 @@ class ScanErrorTest {
 	void allCodesRoundTrip(ScanError.Code code) {
 		ScanError err = new ScanError(code, "msg");
 		Dictionary dict = err.buildRawData();
-		assertEquals(code, dict.get("code"),
+		assertEquals(code.ordinal(), dict.get("code"),
 				"Expected code " + code + " but got " + dict.get("code"));
 	}
 
