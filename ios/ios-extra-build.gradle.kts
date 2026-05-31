@@ -25,8 +25,8 @@
 // Override any of the ext properties below in project's gradle.properties
 // or in an ext{} block before applying this file:
 //
-//   faceLandmarkerModelVersion   – MediaPipe model version tag (default: "latest")
-//   faceLandmarkerModelDir       – Destination directory relative to the
+//   faceLandmarkerModelVersion   - MediaPipe model version tag (default: "latest")
+//   faceLandmarkerModelDir       - Destination directory relative to the
 //                                  project root (default shown below)
 //
 

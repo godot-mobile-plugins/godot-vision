@@ -22,11 +22,11 @@ import java.util.Map;
  *
  * <h3>Available fixtures</h3>
  * <ul>
- *   <li>{@link #minimalFace()} – 3 points, 1 triangle, every contour populated
+ *   <li>{@link #minimalFace()} - 3 points, 1 triangle, every contour populated
  *       with the first 3 shared points.</li>
- *   <li>{@link #singlePointFace(float, float, float)} – a face reduced to one
+ *   <li>{@link #singlePointFace(float, float, float)} - a face reduced to one
  *       landmark, useful for edge-case arithmetic assertions.</li>
- *   <li>{@link #multipleFaces(int)} – builds N cloned minimal faces.</li>
+ *   <li>{@link #multipleFaces(int)} - builds N cloned minimal faces.</li>
  * </ul>
  */
 public final class FaceMeshFixtures {

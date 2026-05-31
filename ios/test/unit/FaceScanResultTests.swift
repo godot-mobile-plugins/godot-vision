@@ -16,71 +16,133 @@ final class FaceScanResultTests: XCTestCase {
 	// MARK: - Helpers
 	// -----------------------------------------------------------------------
 
+	/// Builds a minimal imageInfo NSDictionary that mirrors the layout
+	/// produced by vision_plugin.mm before it is handed to the Swift bridge.
+	/// An empty NSData buffer is sufficient for structural tests; no actual
+	/// pixel data is needed since FaceScanResult only stores and re-emits the
+	/// dictionary without inspecting the buffer contents.
+	private func makeImageInfo(width: Int = 640, height: Int = 480) -> NSDictionary {
+		[
+			"buffer": NSData(),
+			"width": NSNumber(value: width),
+			"height": NSNumber(value: height),
+			"format": NSNumber(value: 4),   // Image.FORMAT_RGBA8
+			"has_mipmaps": NSNumber(value: 0)
+		]
+	}
+
 	private func buildResult(
 		faces: [FaceLandmarkerService.DetectedFace] = [],
 		width: Int = 640, height: Int = 480
 	) -> NSDictionary {
-		FaceScanResult(faces: faces, imageWidth: width, imageHeight: height)
+		FaceScanResult(faces: faces, imageInfo: makeImageInfo(width: width, height: height))
 			.buildNSDictionary()
+	}
+
+	/// Returns the "image" sub-dictionary from a result, failing the test if
+	/// it is absent or has the wrong type.
+	private func imageInfo(from dict: NSDictionary, file: StaticString = #file,
+			line: UInt = #line) throws -> NSDictionary {
+		try XCTUnwrap(dict["image"] as? NSDictionary,
+					"result must contain an 'image' NSDictionary",
+					file: file, line: line)
 	}
 
 	// -----------------------------------------------------------------------
 	// MARK: - Top-level structure
 	// -----------------------------------------------------------------------
 
-	func testTopLevelDictionaryContainsImageWidthKey() {
-		XCTAssertNotNil(buildResult()["image_width"])
-	}
-
-	func testTopLevelDictionaryContainsImageHeightKey() {
-		XCTAssertNotNil(buildResult()["image_height"])
+	func testTopLevelDictionaryContainsImageKey() {
+		XCTAssertNotNil(buildResult()["image"])
 	}
 
 	func testTopLevelDictionaryContainsFacesKey() {
 		XCTAssertNotNil(buildResult()["faces"])
 	}
 
-	func testTopLevelDictionaryHasExactlyThreeKeys() {
-		XCTAssertEqual(buildResult().count, 3)
+	func testTopLevelDictionaryHasExactlyTwoKeys() {
+		// Only "image" and "faces" — image_width / image_height have been
+		// folded into the "image" sub-dictionary.
+		XCTAssertEqual(buildResult().count, 2)
+	}
+
+	// -----------------------------------------------------------------------
+	// MARK: - Image sub-dictionary structure
+	// -----------------------------------------------------------------------
+
+	func testImageValueIsNSDictionary() {
+		XCTAssertTrue(buildResult()["image"] is NSDictionary)
+	}
+
+	func testImageDictionaryContainsBufferKey() throws {
+		XCTAssertNotNil(try imageInfo(from: buildResult())["buffer"])
+	}
+
+	func testImageDictionaryContainsWidthKey() throws {
+		XCTAssertNotNil(try imageInfo(from: buildResult())["width"])
+	}
+
+	func testImageDictionaryContainsHeightKey() throws {
+		XCTAssertNotNil(try imageInfo(from: buildResult())["height"])
+	}
+
+	func testImageDictionaryContainsFormatKey() throws {
+		XCTAssertNotNil(try imageInfo(from: buildResult())["format"])
+	}
+
+	func testImageDictionaryContainsHasMipmapsKey() throws {
+		XCTAssertNotNil(try imageInfo(from: buildResult())["has_mipmaps"])
 	}
 
 	// -----------------------------------------------------------------------
 	// MARK: - Image dimensions
 	// -----------------------------------------------------------------------
 
-	func testImageWidthValueIsPreserved() {
-		let dict = buildResult(width: 1280, height: 720)
-		XCTAssertEqual((dict["image_width"] as? NSNumber)?.intValue, 1280)
+	func testImageWidthValueIsPreserved() throws {
+		let info = try imageInfo(from: buildResult(width: 1280, height: 720))
+		XCTAssertEqual((info["width"] as? NSNumber)?.intValue, 1280)
 	}
 
-	func testImageHeightValueIsPreserved() {
-		let dict = buildResult(width: 1280, height: 720)
-		XCTAssertEqual((dict["image_height"] as? NSNumber)?.intValue, 720)
+	func testImageHeightValueIsPreserved() throws {
+		let info = try imageInfo(from: buildResult(width: 1280, height: 720))
+		XCTAssertEqual((info["height"] as? NSNumber)?.intValue, 720)
 	}
 
-	func testImageWidthIsNSNumber() {
-		XCTAssertTrue(buildResult()["image_width"] is NSNumber)
+	func testImageWidthIsNSNumber() throws {
+		XCTAssertTrue(try imageInfo(from: buildResult())["width"] is NSNumber)
 	}
 
-	func testImageHeightIsNSNumber() {
-		XCTAssertTrue(buildResult()["image_height"] is NSNumber)
+	func testImageHeightIsNSNumber() throws {
+		XCTAssertTrue(try imageInfo(from: buildResult())["height"] is NSNumber)
 	}
 
-	func testZeroDimensionsAreStoredWithoutModification() {
+	func testZeroDimensionsAreStoredWithoutModification() throws {
 		// Unusual but must not crash or alter the value.
-		let dict = buildResult(width: 0, height: 0)
-		XCTAssertEqual((dict["image_width"] as? NSNumber)?.intValue, 0)
-		XCTAssertEqual((dict["image_height"] as? NSNumber)?.intValue, 0)
+		let info = try imageInfo(from: buildResult(width: 0, height: 0))
+		XCTAssertEqual((info["width"]  as? NSNumber)?.intValue, 0)
+		XCTAssertEqual((info["height"] as? NSNumber)?.intValue, 0)
 	}
 
-	func testLargeDimensionsAreStoredCorrectly() {
-		let dict = buildResult(width: 4096, height: 3072)
-		XCTAssertEqual((dict["image_width"]  as? NSNumber)?.intValue, 4096)
-		XCTAssertEqual((dict["image_height"] as? NSNumber)?.intValue, 3072)
+	func testLargeDimensionsAreStoredCorrectly() throws {
+		let info = try imageInfo(from: buildResult(width: 4096, height: 3072))
+		XCTAssertEqual((info["width"]  as? NSNumber)?.intValue, 4096)
+		XCTAssertEqual((info["height"] as? NSNumber)?.intValue, 3072)
+	}
+
+	func testFormatValueIsPreserved() throws {
+		// Vision.gd always passes FORMAT_RGBA8 (== 4).
+		let info = try imageInfo(from: buildResult())
+		XCTAssertEqual((info["format"] as? NSNumber)?.intValue, 4)
+	}
+
+	func testHasMipmapsValueIsPreserved() throws {
+		// Vision.gd converts to FORMAT_RGBA8 (no mipmaps) before calling the plugin.
+		let info = try imageInfo(from: buildResult())
+		XCTAssertEqual((info["has_mipmaps"] as? NSNumber)?.intValue, 0)
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - Faces array – count
+	// MARK: - Faces array - count
 	// -----------------------------------------------------------------------
 
 	func testFacesArrayIsNSArray() {
@@ -166,11 +228,10 @@ final class FaceScanResultTests: XCTestCase {
 		let dict   = buildResult(faces: [face1, face2])
 		let faces  = try XCTUnwrap(dict["faces"] as? NSArray)
 
-		// Cleaned up nested optionals to be more robust
-		let face0 = try XCTUnwrap(faces[0] as? NSDictionary)
+		let face0     = try XCTUnwrap(faces[0] as? NSDictionary)
 		let face1Dict = try XCTUnwrap(faces[1] as? NSDictionary)
 
-		let pts1 = try XCTUnwrap(face0["points"] as? NSArray)
+		let pts1 = try XCTUnwrap(face0["points"]     as? NSArray)
 		let pts2 = try XCTUnwrap(face1Dict["points"] as? NSArray)
 
 		let pt1 = try XCTUnwrap(pts1[0] as? NSArray)
@@ -189,7 +250,7 @@ final class FaceScanResultTests: XCTestCase {
 	func testCallingBuildNSDictionaryTwiceGivesSameResult() {
 		let result = FaceScanResult(
 			faces: [TestFixtures.makeDetectedFace()],
-			imageWidth: 640, imageHeight: 480)
+			imageInfo: makeImageInfo(width: 640, height: 480))
 		let d1 = result.buildNSDictionary()
 		let d2 = result.buildNSDictionary()
 		XCTAssertEqual(d1, d2)

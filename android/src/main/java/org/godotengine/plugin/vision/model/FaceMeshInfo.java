@@ -66,7 +66,7 @@ public class FaceMeshInfo {
 	//
 	// {
 	//   "points": [             ← Object[] of 468 entries, each Object[3]
-	//     [x, y, z],            ← double; x,y normalised 0–1; z is relative depth
+	//     [x, y, z],            ← double; x,y normalised 0-1; z is relative depth
 	//     …
 	//   ],
 	//   "triangles": [          ← Object[] of triangle entries, each Object[3]

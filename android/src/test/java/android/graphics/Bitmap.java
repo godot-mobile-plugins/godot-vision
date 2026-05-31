@@ -7,7 +7,7 @@ package android.graphics;
 import java.nio.Buffer;
 
 /**
- * Bitmap stub – stands in for the real Android Bitmap in JVM unit tests.
+ * Bitmap stub - stands in for the real Android Bitmap in JVM unit tests.
  * {@code createBitmap} returns a live (non-null) stub instance so that the
  * production code path that calls {@code copyPixelsFromBuffer} does not NPE.
  */
@@ -32,7 +32,7 @@ public class Bitmap {
 
 	// -- Stub methods -------------------------------------------------------
 
-	/** No-op – the buffer is ignored in tests; the bitmap data is irrelevant. */
+	/** No-op - the buffer is ignored in tests; the bitmap data is irrelevant. */
 	public void copyPixelsFromBuffer(Buffer src) { /* no-op */
 	}
 

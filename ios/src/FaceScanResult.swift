@@ -9,8 +9,13 @@
 // face_mesh_ready signal:
 //
 //   {
-//     "image_width":  Int,
-//     "image_height": Int,
+//     "image": {                  ← full ImageInfo dictionary for the processed image
+//       "buffer":     NSData,     ← raw RGBA8 pixel data (maps to PackedByteArray in GDScript)
+//       "width":      NSNumber,
+//       "height":     NSNumber,
+//       "format":     NSNumber,   ← Godot Image.FORMAT_RGBA8 == 4
+//       "has_mipmaps": NSNumber   ← 0 or 1
+//     },
 //     "faces": [
 //       { "points": …, "triangles": …, "contours": … },
 //       …
@@ -27,19 +32,22 @@ final class FaceScanResult {
 	// -----------------------------------------------------------------------
 
 	private let faces: [FaceLandmarkerService.DetectedFace]
-	private let imageWidth: Int
-	private let imageHeight: Int
+	private let imageInfo: NSDictionary
 
 	// -----------------------------------------------------------------------
 	// Initialiser
+	//
+	// - Parameter faces:     Detected faces from FaceLandmarkerService.
+	// - Parameter imageInfo: Full ImageInfo NSDictionary built by the
+	//                        VisionSwiftBridge from the incoming image data.
+	//                        Stored verbatim and emitted as the "image" key
+	//                        in the result so GDScript can reconstruct an
+	//                        ImageInfo object from it.
 	// -----------------------------------------------------------------------
-
 	init(faces: [FaceLandmarkerService.DetectedFace],
-			imageWidth: Int,
-			imageHeight: Int) {
-		self.faces       = faces
-		self.imageWidth  = imageWidth
-		self.imageHeight = imageHeight
+			imageInfo: NSDictionary) {
+		self.faces     = faces
+		self.imageInfo = imageInfo
 	}
 
 	// -----------------------------------------------------------------------
@@ -61,8 +69,9 @@ final class FaceScanResult {
 	func buildNSDictionary() -> NSDictionary {
 		let dict = NSMutableDictionary()
 
-		dict["image_width"]  = NSNumber(value: imageWidth)
-		dict["image_height"] = NSNumber(value: imageHeight)
+		// Embed the full ImageInfo dictionary so GDScript can call
+		// result.get_image() to obtain an ImageInfo object.
+		dict["image"] = imageInfo
 
 		// Build the faces array using NSMutableArray so each face dictionary
 		// is inserted via ObjC addObject: and retains its NSDictionary identity.

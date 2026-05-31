@@ -25,12 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit tests for {@link FaceScanResult}.
  *
  * Covers:
- *  – top-level keys: "image_width", "image_height", "faces"
- *  – image dimensions stored as {@code long}
- *  – "faces" length matches the number of supplied FaceMesh objects
- *  – each face entry is a Dictionary with "points", "triangles", "contours"
- *  – empty face list produces an empty "faces" array (not null)
- *  – multiple faces are each serialised independently
+ *  - top-level keys: "image", "faces"
+ *  - "image" sub-dictionary contains all ImageInfo fields
+ *    (buffer, width, height, format, has_mipmaps)
+ *  - width / height values round-trip through the ImageInfo sub-dictionary
+ *  - "faces" length matches the number of supplied FaceMesh objects
+ *  - each face entry is a Dictionary with "points", "triangles", "contours"
+ *  - empty face list produces an empty "faces" array (not null)
+ *  - multiple faces are each serialised independently
  */
 @DisplayName("FaceScanResult")
 class FaceScanResultTest {
@@ -40,13 +42,36 @@ class FaceScanResultTest {
 
 	// -- Helpers ------------------------------------------------------------
 
-	private static Dictionary buildSingle() {
-		List<FaceMesh> faces = List.of(FaceMeshFixtures.minimalFace());
-		return new FaceScanResult(faces, W, H).buildRawData();
+	/**
+	 * Builds a minimal ImageInfo Dictionary that mirrors what Vision.gd passes
+	 * to the plugin after converting the image to FORMAT_RGBA8.
+	 * An empty buffer is sufficient for structural tests; FaceScanResult only
+	 * stores and re-emits the dictionary without inspecting pixel data.
+	 */
+	private static Dictionary buildImageInfoDict(int width, int height) {
+		Dictionary d = new Dictionary();
+		d.put("buffer", new byte[0]);   // empty — not inspected by FaceScanResult
+		d.put("width", (long) width);
+		d.put("height", (long) height);
+		d.put("format", 4L);            // Godot Image.FORMAT_RGBA8
+		d.put("has_mipmaps", false);
+		return d;
 	}
 
+	/** Returns a result built from a single minimal FaceMesh and the default dimensions. */
+	private static Dictionary buildSingle() {
+		List<FaceMesh> faces = List.of(FaceMeshFixtures.minimalFace());
+		return new FaceScanResult(faces, new ImageInfo(buildImageInfoDict(W, H))).buildRawData();
+	}
+
+	/** Extracts the "faces" Object[] from a result dictionary. */
 	private static Object[] facesArray(Dictionary dict) {
 		return (Object[]) dict.get("faces");
+	}
+
+	/** Extracts and casts the "image" sub-dictionary from a result dictionary. */
+	private static Dictionary imageDict(Dictionary dict) {
+		return (Dictionary) dict.get("image");
 	}
 
 	// -- Top-level keys -----------------------------------------------------
@@ -56,15 +81,9 @@ class FaceScanResultTest {
 	class TopLevel {
 
 		@Test
-		@DisplayName("contains 'image_width'")
-		void hasImageWidth() {
-			assertTrue(buildSingle().containsKey("image_width"));
-		}
-
-		@Test
-		@DisplayName("contains 'image_height'")
-		void hasImageHeight() {
-			assertTrue(buildSingle().containsKey("image_height"));
+		@DisplayName("contains 'image'")
+		void hasImage() {
+			assertTrue(buildSingle().containsKey("image"));
 		}
 
 		@Test
@@ -72,45 +91,117 @@ class FaceScanResultTest {
 		void hasFaces() {
 			assertTrue(buildSingle().containsKey("faces"));
 		}
+
+		@Test
+		@DisplayName("does not contain legacy 'image_width' key")
+		void doesNotHaveImageWidth() {
+			// image_width was promoted into the "image" sub-dictionary.
+			assertTrue(!buildSingle().containsKey("image_width"),
+					"'image_width' should no longer be a top-level key");
+		}
+
+		@Test
+		@DisplayName("does not contain legacy 'image_height' key")
+		void doesNotHaveImageHeight() {
+			// image_height was promoted into the "image" sub-dictionary.
+			assertTrue(!buildSingle().containsKey("image_height"),
+					"'image_height' should no longer be a top-level key");
+		}
+	}
+
+	// -- Image sub-dictionary structure -------------------------------------
+
+	@Nested
+	@DisplayName("image sub-dictionary")
+	class ImageSubDictionary {
+
+		@Test
+		@DisplayName("'image' value is a Dictionary")
+		void imageIsDictionary() {
+			assertInstanceOf(Dictionary.class, buildSingle().get("image"));
+		}
+
+		@Test
+		@DisplayName("'image' contains 'buffer'")
+		void hasBuffer() {
+			assertTrue(imageDict(buildSingle()).containsKey("buffer"));
+		}
+
+		@Test
+		@DisplayName("'image' contains 'width'")
+		void hasWidth() {
+			assertTrue(imageDict(buildSingle()).containsKey("width"));
+		}
+
+		@Test
+		@DisplayName("'image' contains 'height'")
+		void hasHeight() {
+			assertTrue(imageDict(buildSingle()).containsKey("height"));
+		}
+
+		@Test
+		@DisplayName("'image' contains 'format'")
+		void hasFormat() {
+			assertTrue(imageDict(buildSingle()).containsKey("format"));
+		}
+
+		@Test
+		@DisplayName("'image' contains 'has_mipmaps'")
+		void hasHasMipmaps() {
+			assertTrue(imageDict(buildSingle()).containsKey("has_mipmaps"));
+		}
 	}
 
 	// -- Image dimensions ---------------------------------------------------
 
 	@Nested
-	@DisplayName("image dimensions")
+	@DisplayName("image dimensions (inside 'image' sub-dictionary)")
 	class Dimensions {
 
 		@Test
-		@DisplayName("image_width is stored as Long")
-		void imageWidthIsLong() {
-			assertInstanceOf(Long.class, buildSingle().get("image_width"));
+		@DisplayName("width is stored as Long")
+		void widthIsLong() {
+			assertInstanceOf(Long.class, imageDict(buildSingle()).get("width"));
 		}
 
 		@Test
-		@DisplayName("image_height is stored as Long")
-		void imageHeightIsLong() {
-			assertInstanceOf(Long.class, buildSingle().get("image_height"));
+		@DisplayName("height is stored as Long")
+		void heightIsLong() {
+			assertInstanceOf(Long.class, imageDict(buildSingle()).get("height"));
 		}
 
 		@Test
-		@DisplayName("image_width value matches constructor argument")
-		void imageWidthValue() {
-			assertEquals((long) W, buildSingle().get("image_width"));
+		@DisplayName("width value matches ImageInfo argument")
+		void widthValue() {
+			assertEquals((long) W, imageDict(buildSingle()).get("width"));
 		}
 
 		@Test
-		@DisplayName("image_height value matches constructor argument")
-		void imageHeightValue() {
-			assertEquals((long) H, buildSingle().get("image_height"));
+		@DisplayName("height value matches ImageInfo argument")
+		void heightValue() {
+			assertEquals((long) H, imageDict(buildSingle()).get("height"));
 		}
 
 		@Test
 		@DisplayName("non-standard dimensions are preserved exactly")
 		void nonStandardDimensions() {
 			List<FaceMesh> faces = List.of(FaceMeshFixtures.minimalFace());
-			Dictionary dict = new FaceScanResult(faces, 1920, 1080).buildRawData();
-			assertEquals(1920L, dict.get("image_width"));
-			assertEquals(1080L, dict.get("image_height"));
+			Dictionary dict = new FaceScanResult(
+					faces, new ImageInfo(buildImageInfoDict(1920, 1080))).buildRawData();
+			assertEquals(1920L, imageDict(dict).get("width"));
+			assertEquals(1080L, imageDict(dict).get("height"));
+		}
+
+		@Test
+		@DisplayName("format value is preserved (FORMAT_RGBA8 == 4)")
+		void formatValue() {
+			assertEquals(4L, imageDict(buildSingle()).get("format"));
+		}
+
+		@Test
+		@DisplayName("has_mipmaps value is preserved")
+		void hasMipmapsValue() {
+			assertEquals(false, imageDict(buildSingle()).get("has_mipmaps"));
 		}
 	}
 
@@ -130,7 +221,8 @@ class FaceScanResultTest {
 		@DisplayName("two-face list -> faces array of length 2")
 		void twoFaces() {
 			List<FaceMesh> faces = FaceMeshFixtures.multipleFaces(2);
-			Dictionary dict = new FaceScanResult(faces, W, H).buildRawData();
+			Dictionary dict = new FaceScanResult(
+					faces, new ImageInfo(buildImageInfoDict(W, H))).buildRawData();
 			assertEquals(2, facesArray(dict).length);
 		}
 
@@ -138,14 +230,17 @@ class FaceScanResultTest {
 		@DisplayName("five-face list -> faces array of length 5")
 		void fiveFaces() {
 			List<FaceMesh> faces = FaceMeshFixtures.multipleFaces(5);
-			Dictionary dict = new FaceScanResult(faces, W, H).buildRawData();
+			Dictionary dict = new FaceScanResult(
+					faces, new ImageInfo(buildImageInfoDict(W, H))).buildRawData();
 			assertEquals(5, facesArray(dict).length);
 		}
 
 		@Test
 		@DisplayName("empty face list -> non-null faces array of length 0")
 		void emptyFaceList() {
-			Dictionary dict = new FaceScanResult(Collections.emptyList(), W, H).buildRawData();
+			Dictionary dict = new FaceScanResult(
+					Collections.emptyList(),
+					new ImageInfo(buildImageInfoDict(W, H))).buildRawData();
 			Object[] faces = facesArray(dict);
 			assertNotNull(faces);
 			assertEquals(0, faces.length);
@@ -175,7 +270,8 @@ class FaceScanResultTest {
 		@DisplayName("faces are serialised independently (not the same Object reference)")
 		void facesAreIndependent() {
 			List<FaceMesh> faces = FaceMeshFixtures.multipleFaces(2);
-			Dictionary dict = new FaceScanResult(faces, W, H).buildRawData();
+			Dictionary dict = new FaceScanResult(
+					faces, new ImageInfo(buildImageInfoDict(W, H))).buildRawData();
 			Object[] arr = facesArray(dict);
 			assertNotSame(arr[0], arr[1],
 					"Each face must be a separate Dictionary instance");

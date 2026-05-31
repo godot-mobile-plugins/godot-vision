@@ -81,7 +81,7 @@ public class VisionPlugin extends GodotPlugin {
 	// -------------------------------------------------------------------------
 	@UsedByGodot
 	public void set_max_faces(int aMaxFaces) {
-		Log.d(LOG_TAG, "set_max_faces(" + aMaxFaces + ") called – "
+		Log.d(LOG_TAG, "set_max_faces(" + aMaxFaces + ") called - "
 				+ "ML Kit FaceMeshDetector does not support a configurable face limit; "
 				+ "the SDK default (5) is used on Android.");
 	}
@@ -92,12 +92,14 @@ public class VisionPlugin extends GodotPlugin {
 	//
 	// The dictionary is expected to contain the fields produced by
 	// ImageInfo.create_from_image() on the GDScript side:
-	//   buffer  – byte[]  raw RGBA8 pixels
-	//   width   – long
-	//   height  – long
-	//   format  – long    (Godot Image.FORMAT_RGBA8 == 4)
+	//   buffer       - byte[]  raw RGBA8 pixels
+	//   width        - long
+	//   height       - long
+	//   format       - long    (Godot Image.FORMAT_RGBA8 == 4)
+	//   has_mipmaps  - bool
 	//
-	// On success emits face_mesh_ready with a result dictionary (see below).
+	// On success emits face_mesh_ready with a result dictionary whose "image"
+	// key holds the full ImageInfo dictionary (see FaceScanResult.buildRawData()).
 	// On failure emits face_mesh_failed with a ScanError dictionary.
 	// -------------------------------------------------------------------------
 	@UsedByGodot
@@ -127,10 +129,13 @@ public class VisionPlugin extends GodotPlugin {
 			// native byte order, so we must swap R↔B channels when copying.
 			Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 			// copyPixelsFromBuffer interprets the buffer as RGBA in the buffer's
-			// byte order – which matches Godot's FORMAT_RGBA8 layout directly.
+			// byte order - which matches Godot's FORMAT_RGBA8 layout directly.
 			bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(buffer));
 
 			InputImage mlImage = InputImage.fromBitmap(bitmap, 0 /* rotationDegrees */);
+
+			// Capture imageInfo for use in the success listener lambda.
+			final ImageInfo capturedImageInfo = imageInfo;
 
 			faceMeshDetector.process(mlImage)
 					.addOnSuccessListener(faceMeshes -> {
@@ -140,7 +145,7 @@ public class VisionPlugin extends GodotPlugin {
 											.buildRawData());
 							return;
 						}
-						FaceScanResult result = new FaceScanResult(faceMeshes, width, height);
+						FaceScanResult result = new FaceScanResult(faceMeshes, capturedImageInfo);
 						emitSignal(FACE_MESH_READY_SIGNAL, result.buildRawData());
 					})
 					.addOnFailureListener(e -> {

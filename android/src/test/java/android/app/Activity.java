@@ -4,6 +4,6 @@
 
 package android.app;
 
-/** Minimal Activity stub – satisfies the compiler without the Android SDK. */
+/** Minimal Activity stub - satisfies the compiler without the Android SDK. */
 public class Activity {
 }

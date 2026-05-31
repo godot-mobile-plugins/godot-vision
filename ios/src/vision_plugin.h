@@ -32,8 +32,13 @@ extern const char *FACE_MESH_FAILED_SIGNAL_NAME;
 //     Emitted when detection succeeds.  The dictionary layout matches the
 //     Android counterpart (see FaceScanResult.swift for the full schema):
 //       {
-//         "image_width":  int,
-//         "image_height": int,
+//         "image": {                ← full ImageInfo dictionary for the processed image
+//           "buffer":     PackedByteArray,  ← raw RGBA8 pixel data
+//           "width":      int,
+//           "height":     int,
+//           "format":     int,      ← Godot Image.FORMAT_RGBA8 == 4
+//           "has_mipmaps": bool
+//         },
 //         "faces": [
 //           {
 //             "points":    [[x,y,z], …],   // 468 normalised landmarks
@@ -72,7 +77,7 @@ class VisionPlugin : public Object {
 	GDCLASS(VisionPlugin, Object);
 
 private:
-	// Singleton instance – accessed from the ObjC callback shim.
+	// Singleton instance - accessed from the ObjC callback shim.
 	static VisionPlugin *instance;
 
 	// Retained ObjC/Swift bridge that drives MediaPipe on a background queue.

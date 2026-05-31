@@ -31,7 +31,7 @@ import Foundation
 enum FaceMeshConstants {
 
 	// -----------------------------------------------------------------------
-	// Contour keys – order matches Android CONTOUR_KEYS array in
+	// Contour keys - order matches Android CONTOUR_KEYS array in
 	// FaceMeshInfo.java so that GDScript can use identical key strings on
 	// both platforms.
 	// -----------------------------------------------------------------------

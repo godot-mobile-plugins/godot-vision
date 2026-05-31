@@ -46,7 +46,7 @@ final class ScanErrorTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - buildNSDictionary – structure
+	// MARK: - buildNSDictionary - structure
 	// -----------------------------------------------------------------------
 
 	func testBuildNSDictionaryContainsCodeKey() {
@@ -68,7 +68,7 @@ final class ScanErrorTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - buildNSDictionary – code values
+	// MARK: - buildNSDictionary - code values
 	// -----------------------------------------------------------------------
 
 	func testBuildNSDictionaryCodeMatchesRawValue_none() {
@@ -92,7 +92,7 @@ final class ScanErrorTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - buildNSDictionary – description values
+	// MARK: - buildNSDictionary - description values
 	// -----------------------------------------------------------------------
 
 	func testBuildNSDictionaryDescriptionIsPreservedVerbatim() {
@@ -116,7 +116,7 @@ final class ScanErrorTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - buildNSDictionary – type safety
+	// MARK: - buildNSDictionary - type safety
 	// -----------------------------------------------------------------------
 
 	func testBuildNSDictionaryCodeIsNSNumber() {

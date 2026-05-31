@@ -80,7 +80,7 @@ final class FaceMeshConstantsTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - contourIndices – parallel-array contract
+	// MARK: - contourIndices - parallel-array contract
 	// -----------------------------------------------------------------------
 
 	func testContourIndicesCountMatchesKeyCount() {
@@ -114,7 +114,7 @@ final class FaceMeshConstantsTests: XCTestCase {
 	}
 
 	func testNoseBridgeHasFivePoints() {
-		// nose_bridge = [168, 6, 197, 195, 5] – verify explicitly
+		// nose_bridge = [168, 6, 197, 195, 5] - verify explicitly
 		guard let idx = FaceMeshConstants.contourKeys.firstIndex(of: "nose_bridge") else {
 			return XCTFail("nose_bridge contour not found")
 		}
@@ -143,7 +143,7 @@ final class FaceMeshConstantsTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// MARK: - triangles – count and structure
+	// MARK: - triangles - count and structure
 	// -----------------------------------------------------------------------
 
 	func testTriangleCountIs852() {
