@@ -49,10 +49,10 @@ final class VisionSwiftBridgeTests: XCTestCase {
 	/// parameter of scanFace().
 	private func makeImageInfo(width: Int, height: Int) -> NSDictionary {
 		[
-			"buffer":      NSData(),
-			"width":       NSNumber(value: width),
-			"height":      NSNumber(value: height),
-			"format":      NSNumber(value: 4),   // Image.FORMAT_RGBA8
+			"buffer": NSData(),
+			"width": NSNumber(value: width),
+			"height": NSNumber(value: height),
+			"format": NSNumber(value: 4),   // Image.FORMAT_RGBA8
 			"has_mipmaps": NSNumber(value: 0)
 		]
 	}

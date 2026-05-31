@@ -33,14 +33,8 @@ func to_image() -> Image:
 	if not is_valid():
 		push_error("ImageInfo: Cannot create image, missing required data.")
 		return null
-		
-	return Image.create_from_data(
-		get_width(),
-		get_height(),
-		has_mipmaps(),
-		get_format(),
-		get_buffer()
-	)
+
+	return Image.create_from_data(get_width(), get_height(), has_mipmaps(), get_format(), get_buffer())
 
 
 func get_buffer() -> PackedByteArray:

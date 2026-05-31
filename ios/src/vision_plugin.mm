@@ -121,7 +121,7 @@ void VisionPlugin::scan_face(Dictionary image_dict) {
 	int byte_count = (int)pba.size();
 
 	// ---- Extract width / height -------------------------------------------
-	int width  = (int)(int64_t)image_dict["width"];
+	int width = (int)(int64_t)image_dict["width"];
 	int height = (int)(int64_t)image_dict["height"];
 
 	if (width <= 0 || height <= 0 || byte_count <= 0) {
@@ -155,17 +155,14 @@ void VisionPlugin::scan_face(Dictionary image_dict) {
 	// This mirrors the GDScript ImageInfo dictionary layout so GDScript can
 	// reconstruct an ImageInfo object from result.get_image().get_raw_data().
 	NSDictionary *imageInfoDict = @{
-		@"buffer":      bufferData,
-		@"width":       @(width),
-		@"height":      @(height),
-		@"format":      @(format),
-		@"has_mipmaps": @(has_mipmaps ? 1 : 0)
+		@"buffer" : bufferData,
+		@"width" : @(width),
+		@"height" : @(height),
+		@"format" : @(format),
+		@"has_mipmaps" : @(has_mipmaps ? 1 : 0)
 	};
 
-	[swiftBridge scanFaceWithBuffer:bufferData
-						  imageInfo:imageInfoDict
-							  width:(NSInteger)width
-							 height:(NSInteger)height];
+	[swiftBridge scanFaceWithBuffer:bufferData imageInfo:imageInfoDict width:(NSInteger)width height:(NSInteger)height];
 }
 
 // ---------------------------------------------------------------------------

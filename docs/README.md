@@ -63,9 +63,20 @@ _Before installing this plugin, make sure to uninstall any previous versions of 
 
 _If installing both Android and iOS versions of the plugin in the same project, then make sure that both versions use the same addon interface version._
 
-There are 2 ways to install the `Vision` plugin into your project:
+There are 3 ways to install the `Vision` plugin into your project:
+- Through the GMP Menu (recommended)
 - Through the Godot Editor's AssetLib
 - Manually by downloading archives from Github
+
+### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-vision/main/addon/src/main/icon.png" width="18"> Installing via GMP Menu (recommended)
+Steps:
+- install [GMP Menu](https://github.com/godot-mobile-plugins/gmp-menu/releases) if not installed
+- enable `GMP Menu` via the `Plugins` tab of `Godot Editor`'s `Project->Project Settings...` menu if not enabled
+- select `Vision Plugin` from `Godot Editor`'s `GMP` menu
+- select desired plugin version and platform
+- click `Download` button
+- once the download has completed, click `Install` button
+- enable `Vision` via the `Plugins` tab of `Project->Project Settings...` menu, in the Godot Editor
 
 ### <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-vision/main/addon/src/main/icon.png" width="18"> Installing via AssetLib
 Steps:

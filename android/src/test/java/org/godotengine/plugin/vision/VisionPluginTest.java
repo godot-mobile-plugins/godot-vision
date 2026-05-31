@@ -385,7 +385,7 @@ class VisionPluginTest {
 			assertTrue(payload.containsKey("faces"), "must have 'faces'");
 			// Dimensions and buffer are now inside the 'image' sub-dictionary.
 			Dictionary imageDict = (Dictionary) payload.get("image");
-			assertTrue(imageDict.containsKey("width"),  "image must have 'width'");
+			assertTrue(imageDict.containsKey("width"), "image must have 'width'");
 			assertTrue(imageDict.containsKey("height"), "image must have 'height'");
 			assertTrue(imageDict.containsKey("buffer"), "image must have 'buffer'");
 		}

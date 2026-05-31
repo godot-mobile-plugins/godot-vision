@@ -23,10 +23,10 @@ final class FaceScanResultTests: XCTestCase {
 	/// dictionary without inspecting the buffer contents.
 	private func makeImageInfo(width: Int = 640, height: Int = 480) -> NSDictionary {
 		[
-			"buffer":      NSData(),
-			"width":       NSNumber(value: width),
-			"height":      NSNumber(value: height),
-			"format":      NSNumber(value: 4),   // Image.FORMAT_RGBA8
+			"buffer": NSData(),
+			"width": NSNumber(value: width),
+			"height": NSNumber(value: height),
+			"format": NSNumber(value: 4),   // Image.FORMAT_RGBA8
 			"has_mipmaps": NSNumber(value: 0)
 		]
 	}
@@ -41,7 +41,8 @@ final class FaceScanResultTests: XCTestCase {
 
 	/// Returns the "image" sub-dictionary from a result, failing the test if
 	/// it is absent or has the wrong type.
-	private func imageInfo(from dict: NSDictionary, file: StaticString = #file, line: UInt = #line) throws -> NSDictionary {
+	private func imageInfo(from dict: NSDictionary, file: StaticString = #file,
+			line: UInt = #line) throws -> NSDictionary {
 		try XCTUnwrap(dict["image"] as? NSDictionary,
 					"result must contain an 'image' NSDictionary",
 					file: file, line: line)
