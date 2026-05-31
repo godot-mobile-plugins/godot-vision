@@ -33,7 +33,7 @@ public class ScanError {
 	public Dictionary buildRawData() {
 		Dictionary dict = new Dictionary();
 
-		dict.put(DATA_CODE_PROPERTY, code);
+		dict.put(DATA_CODE_PROPERTY, code.ordinal());
 		dict.put(DATA_DESCRIPTION_PROPERTY, description);
 
 		return dict;
