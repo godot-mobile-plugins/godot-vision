@@ -46,14 +46,14 @@ A Godot plugin that provides a unified GDScript interface for **ML Kit face mesh
 
 <a name="demo"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/addon/src/main/icon.png" width="20"> Demo
+## <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-vision/main/addon/src/main/icon.png" width="20"> Demo
 
 Try the **demo app** located in the `demo` directory.
 
 <p align="center">
-	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/docs/assets/demo_screenshot_ios_111.png" width="234">
-	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/docs/assets/demo_screenshot_ios_112.png" width="234">
-	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-inapp-review/main/docs/assets/demo_screenshot_ios_113.png" width="234">
+	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-vision/main/docs/assets/demo_screenshot_ios_111.png" width="234">
+	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-vision/main/docs/assets/demo_screenshot_ios_112.png" width="234">
+	<img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-vision/main/docs/assets/demo_screenshot_ios_113.png" width="234">
 </p>
 
 <a name="installation"></a>
